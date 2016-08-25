@@ -72,6 +72,8 @@ void Turret::Update(float timeStep)
 
     Node *nodeJack = GetScene()->GetChild("Jack");
 
+    gunsEnabled = false;
+
     if (GetDistance(nodeJack) > 25.0f)
     {
         RotateToDefault(maxAngle);
@@ -135,8 +137,6 @@ void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
     float angle = NormalizeAngle(Atan2(positionTarget.x_ - position.x_, positionTarget.z_ - position.z_) + 180.0f);
 
     float delta = NormalizeAngle(angle - bone->node_->GetWorldRotation().YawAngle());
-
-    gunsEnabled = false;
 
     if (Abs(delta) < 25.0f)
     {
