@@ -160,7 +160,7 @@ void CharacterDemo::CreateScene()
         shape->SetTriangleMesh(object->GetModel(), 0);
     }
 
-    const unsigned NUM_GUNS = 300;
+    const unsigned NUM_GUNS = 200;
     for(unsigned i = 0; i < NUM_GUNS; ++i)
     {
         CreateTurret(Vector3(Random(180.0f) - 90.0f, 0.0f, Random(180.0f) - 90.0f));

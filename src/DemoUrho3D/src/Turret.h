@@ -53,7 +53,11 @@ private:
     ///
     void AnimateGun(Bone *bone, float timeStep);
 
+    ///
+    void UpdateBeacon();
+
     float dirOnTarget = 0.0f;
     float worldRotationDefault = 0.0f;
     float rotateGun = 0.0f;
+    bool beaconEnabled = false;
 };

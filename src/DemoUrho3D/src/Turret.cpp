@@ -1,7 +1,10 @@
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Graphics/AnimatedModel.h>
+#include <Urho3D/Graphics/Model.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Scene/Scene.h>
+#include <Urho3D/Graphics/Light.h>
+#include <Urho3D/Resource/ResourceCache.h>
 
 #include "Turret.h"
 
@@ -18,7 +21,23 @@ void Turret::RegisterObject(Context* context)
 
 void Turret::Start()
 {
+    Node *lightNode = node_->CreateChild("Beacon");
+    Light *light = lightNode->CreateComponent<Light>();
+    light->SetLightType(LIGHT_POINT);
+    light->SetCastShadows(false);
+    light->SetRange(0.32f);
+    light->SetBrightness(100.0f);
+    light->SetColor(Color(1.0f, 0.0f, 0.0f));
 
+    Vector3 position = {0.0f, 4.08f, 0.05f};
+
+    lightNode->SetPosition(position);
+
+    Node *cubeNode = node_->CreateChild("box");
+    StaticModel *cube = cubeNode->CreateComponent<StaticModel>();
+    cube->SetModel(GetSubsystem<ResourceCache>()->GetResource<Model>("Models/Box.mdl"));
+    cubeNode->SetPosition(position);
+    cubeNode->SetScale(0.05f);
 }
 
 void Turret::Update(float timeStep)
@@ -29,14 +48,18 @@ void Turret::Update(float timeStep)
 
     Node *nodeJack = GetScene()->GetChild("Jack");
 
-    if (GetDistance(nodeJack) > 50.0f)
+    if (GetDistance(nodeJack) > 5.0f)
     {
         RotateToDefault(maxAngle);
+        beaconEnabled = false;
     }
     else
     {
         RotateToTarget(nodeJack, maxAngle, timeStep);
+        beaconEnabled = true;
     }
+
+    UpdateBeacon();
 }
 
 void Turret::AnimateGun(Bone *bone, float timeStep)
@@ -182,4 +205,9 @@ float Turret::NormalizeAngle(float angle)
         return angle - 360.0f;
     }
     return angle;
+}
+
+void Turret::UpdateBeacon()
+{
+    node_->GetChild("Beacon")->SetEnabled(beaconEnabled);
 }
