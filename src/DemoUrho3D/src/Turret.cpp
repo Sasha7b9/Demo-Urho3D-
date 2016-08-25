@@ -76,25 +76,31 @@ void Turret::RotateToTarget(Node *node, float maxAngle)
 {
     Bone *bone = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1");
 
-    float angle = GetDirection(node);
+    Vector3 position = node_->GetPosition();
+    Vector3 positionTarget = node->GetPosition();
 
-    float worldRotation = bone->node_->GetWorldRotation().YawAngle();
+    float angle = NormalizeAngle(Atan2(positionTarget.x_ - position.x_, positionTarget.z_ - position.z_) + 180.0f);
 
-    float diff = AngularDifference(angle, worldRotation);
+    float delta = NormalizeAngle(angle - bone->node_->GetWorldRotation().YawAngle());
 
-    if (fabs(diff) > maxAngle)
+    if (Abs(delta) < 0.1f)
     {
-        if (diff < 0)
-        {
-            angle = worldRotation - maxAngle;
-        }
-        else
-        {
-            angle = worldRotation - maxAngle;
-        }
+        return;
     }
 
-    bone->node_->SetWorldRotation(Quaternion(angle, Vector3::UP));
+    float sign = 1.0f;
+
+    if (delta != 0.0f)
+    {
+        sign = delta / Abs(delta);
+    }
+
+    if (Abs(delta) > maxAngle)
+    {
+        delta = maxAngle;
+    }
+
+    bone->node_->SetWorldRotation(Quaternion(bone->node_->GetWorldRotation().YawAngle() + delta * sign, Vector3::UP));
 }
 
 float Turret::GetDistance(Node *node)
@@ -153,3 +159,15 @@ float Turret::ConvertAngle(float angle)
     return angle;
 }
  
+float Turret::NormalizeAngle(float angle)
+{
+    if (angle < -180.0f)
+    {
+        return angle + 360.0f;
+    }
+    if (angle > 180.0f)
+    {
+        return angle - 360.0f;
+    }
+    return angle;
+}

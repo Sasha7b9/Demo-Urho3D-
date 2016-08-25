@@ -47,6 +47,9 @@ private:
     ///
     float ConvertAngle(float angle);
 
+    /// 
+    float NormalizeAngle(float angle);
+
     float dirOnTarget = 0.0f;
     float worldRotationDefault = 0.0f;
 };
