@@ -269,6 +269,8 @@ void CharacterDemo::CreateTurret(const Vector3& position)
 
 void CharacterDemo::CreateInstructions()
 {
+    return;
+
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     UI* ui = GetSubsystem<UI>();
 

@@ -23,7 +23,7 @@ void Turret::Start()
 
 void Turret::Update(float timeStep)
 {
-    float speed = 20.0f;
+    float speed = 10.0f;
 
     float maxAngle = speed * timeStep;
 
@@ -35,8 +35,14 @@ void Turret::Update(float timeStep)
     }
     else
     {
-        RotateToTarget(nodeJack, maxAngle);
+        RotateToTarget(nodeJack, maxAngle, timeStep);
     }
+}
+
+void Turret::AnimateGun(Bone *bone, float timeStep)
+{
+    rotateGun += timeStep * 360.0f * 2.0f;
+    bone->node_->SetRotation(Quaternion(90.0f, Vector3::RIGHT) * Quaternion(rotateGun, Vector3::UP));
 }
 
 void Turret::SetRotate(float angle)
@@ -72,7 +78,7 @@ void Turret::RotateToDefault(float maxAngle)
     }
 }
 
-void Turret::RotateToTarget(Node *node, float maxAngle)
+void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
 {
     Bone *bone = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1");
 
@@ -83,9 +89,15 @@ void Turret::RotateToTarget(Node *node, float maxAngle)
 
     float delta = NormalizeAngle(angle - bone->node_->GetWorldRotation().YawAngle());
 
-    if (Abs(delta) < 0.1f)
+    if (Abs(delta) < 25.0f)
     {
-        return;
+        AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR"), timeStep);
+        AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL"), timeStep);
+
+        if (Abs(delta) < 1.0f)
+        {
+            return;
+        }
     }
 
     float sign = 1.0f;

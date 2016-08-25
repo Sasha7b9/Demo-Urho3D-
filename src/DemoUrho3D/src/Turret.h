@@ -30,7 +30,7 @@ private:
     void RotateToDefault(float maxAngle);
 
     ///
-    void RotateToTarget(Node *node, float maxAngle);
+    void RotateToTarget(Node *node, float maxAngle, float timeStep);
 
     ///
     float GetDistance(Node *node);
@@ -50,6 +50,10 @@ private:
     /// 
     float NormalizeAngle(float angle);
 
+    ///
+    void AnimateGun(Bone *bone, float timeStep);
+
     float dirOnTarget = 0.0f;
     float worldRotationDefault = 0.0f;
+    float rotateGun = 0.0f;
 };
