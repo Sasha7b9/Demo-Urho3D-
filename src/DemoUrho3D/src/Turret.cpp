@@ -27,17 +27,39 @@ void Turret::Start()
     light->SetCastShadows(false);
     light->SetRange(0.33f);
     light->SetBrightness(200.0f);
-    light->SetColor(Color(1.0f, 0.0f, 0.0f));
+    light->SetColor(Color::RED);
 
     Vector3 position = {0.0f, 2.5f, -0.075f};
 
     lightNode->SetPosition(position);
 
+    Node *lightShot = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("LightL");
+    light = lightShot->CreateComponent<Light>();
+    light->SetLightType(LIGHT_POINT);
+    light->SetCastShadows(false);
+    light->SetRange(0.1f);
+    light->SetBrightness(200.0f);
+    light->SetColor(Color::RED);
+
+    position = {2.4f, 0.7f, -1.1f};
+    lightShot->SetPosition(position);
+
+    lightShot = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("LightR");
+    light = lightShot->CreateComponent<Light>();
+    light->SetLightMask(LIGHT_POINT);
+    light->SetCastShadows(false);
+    light->SetRange(0.1f);
+    light->SetBrightness(200.0f);
+    light->SetColor(Color::RED);
+
+    position = {-2.4f, 0.7f, -1.1f};
+    lightShot->SetPosition(position);
+
     /*
     Node *cubeNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("");
     StaticModel *cube = cubeNode->CreateComponent<StaticModel>();
     cube->SetModel(GetSubsystem<ResourceCache>()->GetResource<Model>("Models/Box.mdl"));
-    cubeNode->SetScale(0.15f);
+    cubeNode->SetScale(0.25f);
     cubeNode->SetPosition(position);
     */
 }
@@ -61,7 +83,7 @@ void Turret::Update(float timeStep)
         beaconEnabled = true;
     }
 
-    UpdateBeacon();
+    UpdateLights();
 }
 
 void Turret::AnimateGun(Bone *bone, float timeStep)
@@ -114,10 +136,13 @@ void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
 
     float delta = NormalizeAngle(angle - bone->node_->GetWorldRotation().YawAngle());
 
+    gunsEnabled = false;
+
     if (Abs(delta) < 25.0f)
     {
         AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR"), timeStep);
         AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL"), timeStep);
+        gunsEnabled = true;
 
         if (Abs(delta) < 1.0f)
         {
@@ -209,7 +234,9 @@ float Turret::NormalizeAngle(float angle)
     return angle;
 }
 
-void Turret::UpdateBeacon()
+void Turret::UpdateLights()
 {
     node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("Beacon")->SetEnabled(beaconEnabled);
+    node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightL")->SetEnabled(gunsEnabled);
+    node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightR")->SetEnabled(gunsEnabled);
 }
