@@ -31,6 +31,6 @@
 tmp
 *.sdf
 *.ilk
-out\CoreData\Shaders\HLSL\Cache
+out/CoreData/Shaders/HLSL/Cache/
 *.suo
 *.opensdf
