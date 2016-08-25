@@ -27,3 +27,10 @@
 *.exe
 *.out
 *.app
+
+tmp
+*.sdf
+*.ilk
+out\CoreData\Shaders\HLSL\Cache
+*.suo
+*.opensdf
