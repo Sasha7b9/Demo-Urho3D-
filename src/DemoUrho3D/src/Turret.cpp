@@ -5,6 +5,8 @@
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Graphics/Light.h>
 #include <Urho3D/Resource/ResourceCache.h>
+#include <Urho3D/Graphics/ParticleEffect.h>
+#include <Urho3D/Graphics/ParticleEmitter.h>
 
 #include "Turret.h"
 
@@ -54,6 +56,22 @@ void Turret::Start()
 
     position = {-2.4f, 0.7f, -1.1f};
     lightShot->SetPosition(position);
+
+    /*
+    ResourceCache *cache = GetSubsystem<ResourceCache>();
+
+    Node *flameNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("FlameL");
+    flameNode->SetPosition({1.5f, 1.0f, -3.5f});
+    flameNode->SetRotation(Quaternion(90.0f, Vector3::LEFT));
+    ParticleEmitter *emitter = flameNode->CreateComponent<ParticleEmitter>();
+    emitter->SetEffect(cache->GetResource<ParticleEffect>("Models/Turret/Particle/Fire.xml"));
+
+    flameNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("FlameR");
+    flameNode->SetPosition({-1.5f, 1.0f, -3.5f});
+    flameNode->SetRotation(Quaternion(90.0f, Vector3::LEFT));
+    emitter = flameNode->CreateComponent<ParticleEmitter>();
+    emitter->SetEffect(cache->GetResource<ParticleEffect>("Models/Turret/Particle/Fire.xml"));
+    */
 
     /*
     Node *cubeNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("");
@@ -239,4 +257,6 @@ void Turret::UpdateLights()
     node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("Beacon")->SetEnabled(beaconEnabled);
     node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightL")->SetEnabled(gunsEnabled);
     node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightR")->SetEnabled(gunsEnabled);
+    //node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("FlameL")->SetEnabled(gunsEnabled);
+    //node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("FlameR")->SetEnabled(gunsEnabled);
 }
