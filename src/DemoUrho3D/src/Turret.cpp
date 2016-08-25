@@ -21,23 +21,25 @@ void Turret::RegisterObject(Context* context)
 
 void Turret::Start()
 {
-    Node *lightNode = node_->CreateChild("Beacon");
+    Node *lightNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("Beacon");
     Light *light = lightNode->CreateComponent<Light>();
     light->SetLightType(LIGHT_POINT);
     light->SetCastShadows(false);
-    light->SetRange(0.32f);
-    light->SetBrightness(100.0f);
+    light->SetRange(0.33f);
+    light->SetBrightness(200.0f);
     light->SetColor(Color(1.0f, 0.0f, 0.0f));
 
-    Vector3 position = {0.0f, 4.08f, 0.05f};
+    Vector3 position = {0.0f, 2.5f, -0.075f};
 
     lightNode->SetPosition(position);
 
-    Node *cubeNode = node_->CreateChild("box");
+    /*
+    Node *cubeNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("");
     StaticModel *cube = cubeNode->CreateComponent<StaticModel>();
     cube->SetModel(GetSubsystem<ResourceCache>()->GetResource<Model>("Models/Box.mdl"));
+    cubeNode->SetScale(0.15f);
     cubeNode->SetPosition(position);
-    cubeNode->SetScale(0.05f);
+    */
 }
 
 void Turret::Update(float timeStep)
@@ -48,7 +50,7 @@ void Turret::Update(float timeStep)
 
     Node *nodeJack = GetScene()->GetChild("Jack");
 
-    if (GetDistance(nodeJack) > 5.0f)
+    if (GetDistance(nodeJack) > 25.0f)
     {
         RotateToDefault(maxAngle);
         beaconEnabled = false;
@@ -209,5 +211,5 @@ float Turret::NormalizeAngle(float angle)
 
 void Turret::UpdateBeacon()
 {
-    node_->GetChild("Beacon")->SetEnabled(beaconEnabled);
+    node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("Beacon")->SetEnabled(beaconEnabled);
 }
