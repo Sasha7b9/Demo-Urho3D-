@@ -298,12 +298,14 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\Character.cpp" />
     <ClCompile Include="src\CharacterDemo.cpp" />
     <ClCompile Include="src\Touch.cpp" />
     <ClCompile Include="src\Turret.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Bullet.h" />
     <ClInclude Include="src\Character.h" />
     <ClInclude Include="src\CharacterDemo.h" />
     <ClInclude Include="src\Sample.h" />

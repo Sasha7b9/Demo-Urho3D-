@@ -45,6 +45,7 @@
 
 #include "Character.h"
 #include "Turret.h"
+#include "Bullet.h"
 #include "CharacterDemo.h"
 #include "Touch.h"
 
@@ -59,6 +60,7 @@ CharacterDemo::CharacterDemo(Context* context) :
     // Register factory and attributes for the Character component so it can be created via CreateComponent, and loaded / saved
     Character::RegisterObject(context);
     Turret::RegisterObject(context);
+    Bullet::RegisterObject(context);
 }
 
 CharacterDemo::~CharacterDemo()

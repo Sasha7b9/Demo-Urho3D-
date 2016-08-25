@@ -9,6 +9,7 @@
 #include <Urho3D/Graphics/ParticleEmitter.h>
 
 #include "Turret.h"
+#include "Bullet.h"
 
 Turret::Turret(Context* context) :
     LogicComponent(context)
@@ -74,7 +75,7 @@ void Turret::Start()
     */
 
     /*
-    Node *cubeNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("");
+    Node *cubeNode = node_->GetComponent<AnimatedModdel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("");
     StaticModel *cube = cubeNode->CreateComponent<StaticModel>();
     cube->SetModel(GetSubsystem<ResourceCache>()->GetResource<Model>("Models/Box.mdl"));
     cubeNode->SetScale(0.25f);
@@ -92,7 +93,7 @@ void Turret::Update(float timeStep)
 
     gunsEnabled = false;
 
-    if (GetDistance(nodeJack) > 25.0f)
+    if (GetDistance(nodeJack) > detectDistance)
     {
         RotateToDefault(maxAngle);
         beaconEnabled = false;
@@ -158,8 +159,29 @@ void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
 
     if (Abs(delta) < 25.0f)
     {
+        Bone *bone1 = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR");
+        Bone *bone2 = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL");
+
         AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR"), timeStep);
         AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL"), timeStep);
+
+        float currentTime = GetSubsystem<Time>()->GetElapsedTime();
+
+        if(currentTime >= timePrevShot + 1.0f / rateOfFire)
+        {
+            timePrevShot = currentTime;
+
+            SharedPtr<Node> nodeBullet1(GetScene()->CreateChild("Bullet"));
+            SharedPtr<Bullet> bullet1(nodeBullet1->CreateComponent<Bullet>());
+
+            bullet1->Shot(bone1->node_->GetWorldPosition(), -bone1->node_->GetParent()->GetWorldDirection(), detectDistance);
+
+            SharedPtr<Node> nodeBullet2(GetScene()->CreateChild("Bullet"));
+            SharedPtr<Bullet> bullet2(nodeBullet2->CreateComponent<Bullet>());
+
+            bullet2->Shot(bone2->node_->GetWorldPosition(), -bone2->node_->GetParent()->GetWorldDirection(), detectDistance);
+        }
+
         gunsEnabled = true;
 
         if (Abs(delta) < 1.0f)

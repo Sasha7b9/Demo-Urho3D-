@@ -61,4 +61,8 @@ private:
     float rotateGun = 0.0f;
     bool beaconEnabled = false;
     bool gunsEnabled = false;
+
+    float timePrevShot = 0.0f;
+    float rateOfFire = 20.0f;
+    const float detectDistance = 20.0f;
 };
