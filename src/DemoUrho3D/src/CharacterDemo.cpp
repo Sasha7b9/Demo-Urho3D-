@@ -67,6 +67,8 @@ CharacterDemo::~CharacterDemo()
 
 void CharacterDemo::Start()
 {
+    GetSubsystem<ResourceCache>()->AddResourceDir(GetSubsystem<FileSystem>()->GetProgramDir() + "DemoData");
+
     // Execute base class startup
     Sample::Start();
     if (touchEnabled_)
@@ -250,8 +252,8 @@ void CharacterDemo::CreateTurret(const Vector3& position)
     objectNode->SetPosition(position);
     objectNode->SetScale(scale);
     AnimatedModel* object = objectNode->CreateComponent<AnimatedModel>();
-    object->SetModel(cache->GetResource<Model>("Models/Gun/Gun.mdl"));
-    object->SetMaterial(cache->GetResource<Material>("Models/Gun/Materials/Gun.xml"));
+    object->SetModel(cache->GetResource<Model>("Models/Turret/Turret.mdl"));
+    object->SetMaterial(cache->GetResource<Material>("Models/Turret/Materials/Turret.xml"));
     object->SetCastShadows(true);
 
     RigidBody* body = objectNode->CreateComponent<RigidBody>();
