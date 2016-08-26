@@ -41,7 +41,7 @@ void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance
 {
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
-    Material *material = cache->GetResource<Material>("Materials/LitSmoke.xml");
+    Material *material = cache->GetResource<Material>("Models/Turret/Bullet/Bullet.xml");
 
     float scale = 0.2f;
 
@@ -58,7 +58,7 @@ void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance
 
     float maxDeltaShift = 0.2f;
 
-    Vector3 position = start + direction / direction.Length() * distance / 2 + Vector3(Random(maxDeltaShift), Random(maxDeltaShift), Random(maxDeltaShift));
+    Vector3 position = start + direction / direction.Length() * distance / 2 + Vector3(Random(maxDeltaShift) - maxDeltaShift / 2.0f, Random(maxDeltaShift) - maxDeltaShift / 2.0f, Random(maxDeltaShift) - maxDeltaShift / 2.0f);
 
     node1->SetScale({scale, 1.0f, distance});
     node1->SetWorldPosition(position);

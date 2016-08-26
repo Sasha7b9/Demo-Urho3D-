@@ -114,7 +114,7 @@ void CharacterDemo::CreateScene()
     // Create static scene content. First create a zone for ambient lighting and fog control
     Node* zoneNode = scene_->CreateChild("Zone");
     Zone* zone = zoneNode->CreateComponent<Zone>();
-    zone->SetAmbientColor(Color(0.15f, 0.15f, 0.15f));
+    zone->SetAmbientColor(Color(0.35f, 0.35f, 0.35f));
     zone->SetFogColor(Color(0.5f, 0.5f, 0.7f));
     zone->SetFogStart(100.0f);
     zone->SetFogEnd(300.0f);
@@ -129,6 +129,7 @@ void CharacterDemo::CreateScene()
     light->SetShadowBias(BiasParameters(0.00025f, 0.5f));
     light->SetShadowCascade(CascadeParameters(10.0f, 50.0f, 200.0f, 0.0f, 0.8f));
     light->SetSpecularIntensity(0.5f);
+    light->SetBrightness(0.85f);
 
     // Create the floor object
     Node* floorNode = scene_->CreateChild("Floor");
@@ -214,7 +215,7 @@ void CharacterDemo::CreateCharacter()
 
     SoundListener *listener = objectNode->CreateComponent<SoundListener>();
     GetSubsystem<Audio>()->SetListener(listener);
-    GetSubsystem<Audio>()->SetMasterGain(SOUND_EFFECT, 0.0f);
+    GetSubsystem<Audio>()->SetMasterGain(SOUND_EFFECT, 1.0f);
 
     // spin node
     Node* adjustNode = objectNode->CreateChild("AdjNode");
