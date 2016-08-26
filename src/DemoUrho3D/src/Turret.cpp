@@ -39,9 +39,9 @@ void Turret::Start()
     Node *lightShot = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("LightL");
     light = lightShot->CreateComponent<Light>();
     light->SetLightType(LIGHT_POINT);
-    light->SetCastShadows(false);
-    light->SetRange(1.0f);
-    light->SetBrightness(2.0f);
+    light->SetCastShadows(true);
+    light->SetRange(0.5f);
+    light->SetBrightness(10.0f);
 
     position = {2.4f, 0.7f, -1.1f};
     lightShot->SetPosition(position);
@@ -49,9 +49,9 @@ void Turret::Start()
     lightShot = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("LightR");
     light = lightShot->CreateComponent<Light>();
     light->SetLightMask(LIGHT_POINT);
-    light->SetCastShadows(false);
-    light->SetRange(1.0f);
-    light->SetBrightness(2.0f);
+    light->SetCastShadows(true);
+    light->SetRange(0.5f);
+    light->SetBrightness(10.0f);
 
     position = {-2.4f, 0.7f, -1.1f};
     lightShot->SetPosition(position);
