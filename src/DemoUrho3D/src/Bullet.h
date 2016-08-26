@@ -26,8 +26,7 @@ public:
     void Shot(const Vector3& start, const Vector3& direction, float distance);
 
 private:
-    const float absSpeed = 10.0f;
-    Vector3 vectSpeed = Vector3::ZERO;
-    float traveledDistance = 0.0f;
-    float distance_ = 0.0f;
+    float timeShot = 0.0f;
+    static float timeStartCalc;
+    static float timeForBuild;
 };

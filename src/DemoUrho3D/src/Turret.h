@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Urho3D/Scene/LogicComponent.h>
+#include <Urho3D/Audio/Sound.h>
 
 using namespace Urho3D;
-
 
 class Turret : public LogicComponent
 {
@@ -63,6 +63,8 @@ private:
     bool gunsEnabled = false;
 
     float timePrevShot = 0.0f;
-    float rateOfFire = 20.0f;
+    float rateOfFire = 1.0f;
     const float detectDistance = 20.0f;
+
+    Sound *sound;
 };

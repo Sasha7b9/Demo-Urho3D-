@@ -42,6 +42,8 @@
 #include <Urho3D/UI/Font.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UI.h>
+#include <Urho3D/Audio/SoundListener.h>
+#include <Urho3D/Audio/Audio.h>
 
 #include "Character.h"
 #include "Turret.h"
@@ -207,6 +209,10 @@ void CharacterDemo::CreateCharacter()
 
     Node* objectNode = scene_->CreateChild("Jack");
     objectNode->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
+
+    SoundListener *listener = objectNode->CreateComponent<SoundListener>();
+    GetSubsystem<Audio>()->SetListener(listener);
+    GetSubsystem<Audio>()->SetMasterGain(SOUND_EFFECT, 1.0f);
 
     // spin node
     Node* adjustNode = objectNode->CreateChild("AdjNode");
