@@ -136,7 +136,7 @@ void CharacterDemo::CreateScene()
     floorNode->SetScale(Vector3(200.0f, 1.0f, 200.0f));
     StaticModel* object = floorNode->CreateComponent<StaticModel>();
     object->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-    object->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
+    object->SetMaterial(cache->GetResource<Material>("Materials/StoneTiled.xml"));
 
     RigidBody* body = floorNode->CreateComponent<RigidBody>();
     // Use collision layer bit 2 to mark world scenery. This is what we will raycast against to prevent camera from going
