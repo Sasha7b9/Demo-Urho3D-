@@ -29,7 +29,7 @@ void Turret::Start()
     light->SetLightType(LIGHT_POINT);
     light->SetCastShadows(false);
     light->SetRange(0.33f);
-    light->SetBrightness(200.0f);
+    light->SetBrightness(300.0f);
     light->SetColor(Color::RED);
 
     Vector3 position = {0.0f, 2.5f, -0.075f};
@@ -40,9 +40,8 @@ void Turret::Start()
     light = lightShot->CreateComponent<Light>();
     light->SetLightType(LIGHT_POINT);
     light->SetCastShadows(false);
-    light->SetRange(0.1f);
-    light->SetBrightness(200.0f);
-    light->SetColor(Color::RED);
+    light->SetRange(1.0f);
+    light->SetBrightness(2.0f);
 
     position = {2.4f, 0.7f, -1.1f};
     lightShot->SetPosition(position);
@@ -51,9 +50,8 @@ void Turret::Start()
     light = lightShot->CreateComponent<Light>();
     light->SetLightMask(LIGHT_POINT);
     light->SetCastShadows(false);
-    light->SetRange(0.1f);
-    light->SetBrightness(200.0f);
-    light->SetColor(Color::RED);
+    light->SetRange(1.0f);
+    light->SetBrightness(2.0f);
 
     position = {-2.4f, 0.7f, -1.1f};
     lightShot->SetPosition(position);
@@ -276,9 +274,22 @@ float Turret::NormalizeAngle(float angle)
 
 void Turret::UpdateLights()
 {
+    Node *nodeLightL = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightL");
+    Node *nodeLightR = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightR");
+
+    float time = GetSubsystem<Time>()->GetElapsedTime();
+
     node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("Beacon")->SetEnabled(beaconEnabled);
-    node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightL")->SetEnabled(gunsEnabled);
-    node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightR")->SetEnabled(gunsEnabled);
+    nodeLightL->SetEnabled(gunsEnabled);
+    nodeLightR->SetEnabled(gunsEnabled);
+    if (gunsEnabled)
+    {
+        //nodeLightL->GetComponent<Light>()->SetColor(Color(0.5f * Cos(time * 1e3) + 0.5f, 0.0f, 0.0f));
+        //nodeLightR->GetComponent<Light>()->SetColor(Color(0.5f * Sin(time * 1e3) + 0.5f, 0.0f, 0.0f));
+        nodeLightL->GetComponent<Light>()->SetColor(Color(Random(1.0f), 0.0f, 0.0f));
+        nodeLightR->GetComponent<Light>()->SetColor(Color(Random(1.0f), 0.0f, 0.0f));
+    }
+
     //node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("FlameL")->SetEnabled(gunsEnabled);
     //node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("FlameR")->SetEnabled(gunsEnabled);
 }
