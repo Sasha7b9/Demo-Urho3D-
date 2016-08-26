@@ -60,7 +60,7 @@ void Turret::Start()
     lightShot->SetPosition(position);
 
     SoundSource3D* soundSource = node_->CreateComponent<SoundSource3D>();
-    soundSource->SetDistanceAttenuation(0.0f, 15.0f, 1.0f);
+    soundSource->SetDistanceAttenuation(0.0f, 20.0f, 1.0f);
     soundSource->SetSoundType(SOUND_EFFECT);
 
     sound = GetSubsystem<ResourceCache>()->GetResource<Sound>("Models/Turret/Turret.wav");
@@ -106,7 +106,11 @@ void Turret::Update(float timeStep)
         RotateToDefault(maxAngle);
         beaconEnabled = false;
 
-        node_->GetComponent<SoundSource3D>()->Stop();
+        SoundSource3D *soundSource = node_->GetComponent<SoundSource3D>();
+        if (soundSource->IsPlaying())
+        {
+            soundSource->Stop();
+        }
     }
     else
     {
@@ -121,12 +125,6 @@ void Turret::AnimateGun(Bone *bone, float timeStep)
 {
     rotateGun += timeStep * 360.0f * 2.0f;
     bone->node_->SetRotation(Quaternion(90.0f, Vector3::RIGHT) * Quaternion(rotateGun, Vector3::UP));
-
-    SoundSource3D *soundSource = node_->GetComponent<SoundSource3D>();
-    if (!soundSource->IsPlaying())
-    {
-        soundSource->Play(sound);
-    }
 }
 
 void Turret::SetRotate(float angle)
@@ -181,6 +179,12 @@ void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
         AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR"), timeStep);
         AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL"), timeStep);
 
+        SoundSource3D *soundSource = node_->GetComponent<SoundSource3D>();
+        if (!soundSource->IsPlaying())
+        {
+            soundSource->Play(sound);
+        }
+
         float currentTime = GetSubsystem<Time>()->GetElapsedTime();
 
         if(currentTime >= timePrevShot + 1.0f / rateOfFire)
@@ -203,6 +207,14 @@ void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
         if (Abs(delta) < 1.0f)
         {
             return;
+        }
+    }
+    else
+    {
+        SoundSource3D *soundSource = node_->GetComponent<SoundSource3D>();
+        if (soundSource->IsPlaying())
+        {
+            soundSource->Stop();
         }
     }
 
