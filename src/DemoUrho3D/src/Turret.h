@@ -63,7 +63,7 @@ private:
     bool gunsEnabled = false;
 
     float timePrevShot = 0.0f;
-    float rateOfFire = 1.0f;
+    float rateOfFire = 15.0f;
     const float detectDistance = 20.0f;
 
     Sound *sound;

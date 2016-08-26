@@ -5,6 +5,9 @@
 #include <Urho3D/Graphics/ParticleEmitter.h>
 #include <Urho3D/Graphics/ParticleEffect.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Graphics/StaticModel.h>
+#include <Urho3D/Graphics/Model.h>
+#include <Urho3D/Graphics/Material.h>
 
 #include "Bullet.h"
 
@@ -24,15 +27,11 @@ void Bullet::RegisterObject(Context* context)
 
 void Bullet::Start()
 {
-    Node *nodeSmode = node_->CreateChild("Flame");
-    ParticleEmitter *emitter = nodeSmode->CreateComponent<ParticleEmitter>();
-    emitter->SetEffect(GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Models/Turret/Particle/Fire.xml"));
-    node_->SetEnabled(false);
 }
 
 void Bullet::Update(float timeStep)
 {
-    if (GetSubsystem<Time>()->GetElapsedTime() > timeShot + 1.0f)
+    if (GetSubsystem<Time>()->GetElapsedTime() > timeShot + 0.05f)
     {
         GetScene()->RemoveChild(node_);
     }
@@ -40,50 +39,46 @@ void Bullet::Update(float timeStep)
 
 void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance)
 {
-    if (timeStartCalc + 1.0f <= GetSubsystem<Time>()->GetElapsedTime())
-    {
-        timeStartCalc = GetSubsystem<Time>()->GetElapsedTime();
-        //URHO3D_LOGINFOF("Time build %f in sec", timeForBuild);
-        timeForBuild = 0.0f;
-    }
+    ResourceCache* cache = GetSubsystem<ResourceCache>();
 
-    float timeEnter = GetSubsystem<Time>()->GetElapsedTime();
+    Material *material = cache->GetResource<Material>("Materials/LitSmoke.xml");
 
-    float absStep = 1.0f;
+    float scale = 0.2f;
 
-    Vector3 step = direction / direction.Length() * absStep;
-    node_->SetEnabled(true);
+    Node* node1 = node_->CreateChild();
+    StaticModel *model = node1->CreateComponent<StaticModel>();
+    model->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+    model->SetMaterial(material);
 
-    Vector3 position = start + Random(absStep) * step;
-    float traveledDistance = 0.0f;
+    Node* node11 = node1->CreateChild();
+    model = node11->CreateComponent<StaticModel>();
+    model->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+    model->SetMaterial(material);
+    node11->RotateAround(Vector3::ZERO, Quaternion(180.0f, Vector3::BACK));
 
-    node_->SetWorldPosition(start);
+    float maxDeltaShift = 0.2f;
 
-    Node *nodeSmoke = node_->CreateChild("Smoke");
-    ParticleEmitter *emitter = nodeSmoke->CreateComponent<ParticleEmitter>();
-    emitter->SetEffect(GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Models/Turret/Particle/Fire.xml"));
+    Vector3 position = start + direction / direction.Length() * distance / 2 + Vector3(Random(maxDeltaShift), Random(maxDeltaShift), Random(maxDeltaShift));
 
-    while (traveledDistance <= distance)
-    {
-        /*
-        Node *nodeSmoke = node_->CreateChild("Smoke");
-        ParticleEmitter *emitter = nodeSmoke->CreateComponent<ParticleEmitter>();
-        emitter->SetEffect(GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Models/Turret/Particle/Fire.xml"));
-        nodeSmoke->SetWorldPosition(position);
-        */
+    node1->SetScale({scale, 1.0f, distance});
+    node1->SetWorldPosition(position);
+    node1->SetWorldDirection(direction);
 
-        Node *node = node_->CreateChild("Smoke");
-        node->CloneComponent(emitter);
-        node->SetWorldPosition(position);
+    Node *node2 = node_->CreateChild();
+    model = node2->CreateComponent<StaticModel>();
+    model->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+    model->SetMaterial(material);
+    node2->RotateAround({0.0f, 0.0f, 0.0f}, Quaternion(90.0f, Vector3::UP));
+    node2->SetScale({scale, 1.0f, distance});
+    node2->SetWorldPosition(position);
+    node2->SetWorldDirection(direction);
+    node2->RotateAround(Vector3::ZERO, Quaternion(90.0f, Vector3::BACK));
 
-        position += step;
-        traveledDistance += absStep;
-        nodeSmoke->SetEnabled(true);
-    }
-
-    //URHO3D_LOGINFOF("time %f", GetSubsystem<Time>()->GetElapsedTime() - timeEnter);
+    Node* node21 = node2->CreateChild();
+    model = node21->CreateComponent<StaticModel>();
+    model->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+    model->SetMaterial(material);
+    node21->RotateAround(Vector3::ZERO, Quaternion(180.0f, Vector3::BACK));
 
     timeShot = GetSubsystem<Time>()->GetElapsedTime();
-
-    timeForBuild += GetSubsystem<Time>()->GetElapsedTime() - timeEnter;
 }

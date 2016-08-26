@@ -1,0 +1,4 @@
+<material>
+    <technique name="Models/Turret/Bullet/DiffAlphaNoShadows.xml" quality="0" />
+    <texture unit="diffuse" name="Models/Turret/Bullet/Smoke.png" />
+</material>
