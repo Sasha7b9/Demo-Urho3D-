@@ -214,7 +214,7 @@ void CharacterDemo::CreateCharacter()
 
     SoundListener *listener = objectNode->CreateComponent<SoundListener>();
     GetSubsystem<Audio>()->SetListener(listener);
-    GetSubsystem<Audio>()->SetMasterGain(SOUND_EFFECT, 1.0f);
+    GetSubsystem<Audio>()->SetMasterGain(SOUND_EFFECT, 0.0f);
 
     // spin node
     Node* adjustNode = objectNode->CreateChild("AdjNode");
