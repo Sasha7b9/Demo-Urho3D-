@@ -31,17 +31,29 @@ void Bullet::Start()
 
 void Bullet::Update(float timeStep)
 {
-    if (GetSubsystem<Time>()->GetElapsedTime() > timeShot + 0.05f)
+    float currentTime = GetSubsystem<Time>()->GetElapsedTime();
+
+    if (currentTime > timeShot + timeLive)
     {
         GetScene()->RemoveChild(node_);
+    }
+    else
+    {
+        Color color = material->GetShaderParameter("MatDiffColor").GetColor();
+
+        color.a_ = ((timeShot + timeLive) - currentTime) / timeLive * 0.3f;
+
+        material->SetShaderParameter("MatDiffColor", Variant(color));
     }
 }
 
 void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance)
 {
+    timeLive = Random(0.1f) + 0.1f;
+
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
-    Material *material = cache->GetResource<Material>("Models/Turret/Bullet/Bullet.xml");
+    material = cache->GetResource<Material>("Models/Turret/Bullet/Bullet.xml");
 
     float scale = 0.2f;
 
@@ -56,7 +68,7 @@ void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance
     model->SetMaterial(material);
     node11->RotateAround(Vector3::ZERO, Quaternion(180.0f, Vector3::BACK));
 
-    float maxDeltaShift = 0.2f;
+    float maxDeltaShift = 0.3f;
 
     Vector3 position = start + direction / direction.Length() * distance / 2 + Vector3(Random(maxDeltaShift) - maxDeltaShift / 2.0f, Random(maxDeltaShift) - maxDeltaShift / 2.0f, Random(maxDeltaShift) - maxDeltaShift / 2.0f);
 
