@@ -5,6 +5,8 @@
 
 using namespace Urho3D;
 
+class lSprite;
+
 class Turret : public LogicComponent
 {
     URHO3D_OBJECT(Turret, LogicComponent);
@@ -56,6 +58,11 @@ private:
     ///
     void UpdateLights();
 
+    ///
+    void DrawHealth();
+
+    void HandleShot(StringHash eventType, VariantMap& eventData);
+
     float dirOnTarget = 0.0f;
     float worldRotationDefault = 0.0f;
     float rotateGun = 0.0f;
@@ -66,5 +73,11 @@ private:
     float rateOfFire = 15.0f;
     const float detectDistance = 20.0f;
 
+    float health_ = 100.0f;
+
     Sound *sound = nullptr;
+
+    SharedPtr<lSprite> sprite = nullptr;
+    SharedPtr<Material> materialGUI = nullptr;
+    Node *modelUInode = nullptr;
 };

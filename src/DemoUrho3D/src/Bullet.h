@@ -7,7 +7,7 @@ using namespace Urho3D;
 
 URHO3D_EVENT(E_SHOT, Shot)
 {
-
+    //URHO3D_PARAM(P_NODE, Node);
 }
 
 

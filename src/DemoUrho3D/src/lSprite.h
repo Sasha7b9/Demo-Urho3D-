@@ -22,6 +22,7 @@ public:
     void SetSize(int width, int height);
     void Clear(const Color &color);
     void FillRectangle(int x, int y, int width, int height, const Color &color);
+    Texture* GetTexture();
 
 private:
     lSprite(lSprite const&) : Sprite(nullptr) {};

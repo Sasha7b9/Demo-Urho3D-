@@ -43,3 +43,10 @@ void lSprite::FillRectangle(int x, int y, int width, int height, const Color &co
     SetTexture(texture);
     SetFullImageRect();
 }
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+Texture* lSprite::GetTexture()
+{
+    return Sprite::GetTexture();
+}

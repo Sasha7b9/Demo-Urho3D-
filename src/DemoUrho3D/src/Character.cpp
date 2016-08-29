@@ -66,7 +66,7 @@ void Character::Start()
     // Component has been inserted into its scene node. Subscribe to events now
     SubscribeToEvent(GetNode(), E_NODECOLLISION, URHO3D_HANDLER(Character, HandleNodeCollision));
     // 
-    SubscribeToEvent(E_SHOT, URHO3D_HANDLER(Character, HandleShot));
+    SubscribeToEvent(GetNode(), E_SHOT, URHO3D_HANDLER(Character, HandleShot));
 }
 
 void Character::FixedUpdate(float timeStep)
@@ -199,11 +199,18 @@ void Character::HandleNodeCollision(StringHash eventType, VariantMap& eventData)
 
 void Character::HandleShot(StringHash eventType, VariantMap& eventData)
 {
-    health_ -= 0.05f;
-    gui->DrawHealth(health_);
-    if (health_ <= 0.0f)
+    using namespace Shot;
+
+    //Node *node = static_cast<Node*>(eventData[P_NODE].GetPtr());
+
+    //if(node == node_)
     {
-        AnimationController *animCtrl = node_->GetComponent<AnimationController>(true);
-        animCtrl->PlayExclusive("Models/Mutant/Mutant_Death.ani", 0, false, 0.2f);
+        health_ -= 0.05f;
+        gui->DrawHealth(health_);
+        if(health_ <= 0.0f)
+        {
+            AnimationController *animCtrl = node_->GetComponent<AnimationController>(true);
+            animCtrl->PlayExclusive("Models/Mutant/Mutant_Death.ani", 0, false, 0.2f);
+        }
     }
 }

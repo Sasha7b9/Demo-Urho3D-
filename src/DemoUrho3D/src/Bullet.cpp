@@ -81,9 +81,9 @@ void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance
     RayOctreeQuery query(results, ray, RAY_TRIANGLE, distance, DRAWABLE_GEOMETRY, 1 + 2);
     GetScene()->GetComponent<Octree>()->Raycast(query);
 
-    if (results.Size() > 2)
+    if (results.Size() > 1)
     {
-        RayQueryResult &result = results[2];
+        RayQueryResult &result = results[1];
         Vector3 hitPos = result.position_;
         float newDistance = (st - hitPos).Length();
         if (newDistance < distance)
@@ -94,7 +94,17 @@ void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance
         {
             if (result.node_)
             {
-                result.node_->SendEvent(E_SHOT);
+                using namespace Shot;
+
+                VariantMap& eventData = context_->GetEventDataMap();
+                if(result.node_->GetName() == "AdjNode")
+                {
+                    result.node_->GetParent()->SendEvent(E_SHOT);
+                }
+                else
+                {
+                    result.node_->SendEvent(E_SHOT);
+                }
             }
         }
     }

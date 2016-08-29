@@ -15,6 +15,7 @@
 
 #include "Turret.h"
 #include "Bullet.h"
+#include "lSprite.h"
 
 Turret::Turret(Context* context) :
     LogicComponent(context)
@@ -29,6 +30,8 @@ void Turret::RegisterObject(Context* context)
 
 void Turret::Start()
 {
+    SubscribeToEvent(GetNode(), E_SHOT, URHO3D_HANDLER(Turret, HandleShot));
+
     Node *lightNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("Beacon");
     Light *light = lightNode->CreateComponent<Light>();
     light->SetLightType(LIGHT_POINT);
@@ -108,6 +111,22 @@ void Turret::Start()
     light->SetBrightness(1.0f);
     light->SetColor(Color(1.0f, 1.0f, 0.5f));
 
+    modelUInode = node_->CreateChild("UI");
+    StaticModel *modelUI = modelUInode->CreateComponent<StaticModel>();
+    modelUI->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+    materialGUI = cache->GetResource<Material>("Materials/Stone.xml")->Clone();
+    modelUI->SetMaterial(materialGUI);
+    modelUInode->SetPosition({0.0f, 6.0f, 0.0f});
+    modelUInode->SetScale({6.0f, 1.0f, 0.5f});
+    modelUInode->SetRotation(Quaternion(90.0f, Vector3::LEFT));
+    
+    materialGUI->SetShadowCullMode(CULL_NONE);
+
+    sprite = new lSprite(context_);
+    sprite->SetSize(200, 20);
+
+    DrawHealth();
+
     /*
     ResourceCache *cache = GetSubsystem<ResourceCache>();
 
@@ -133,6 +152,17 @@ void Turret::Start()
     */
 }
 
+void Turret::DrawHealth()
+{
+    Color color = Color::GRAY;
+    color.a_ = 0.5f;
+    sprite->Clear(color);
+    sprite->FillRectangle(0, 0, (int)(200.0f * health_ / 100.0f), 20, Color::RED);
+
+
+    materialGUI->SetTexture(TU_DIFFUSE, sprite->GetTexture());
+}
+
 void Turret::Update(float timeStep)
 {
     float speed = 10.0f;
@@ -140,6 +170,10 @@ void Turret::Update(float timeStep)
     float maxAngle = speed * timeStep;
 
     Node *nodeJack = GetScene()->GetChild("Jack");
+
+    float angle = NormalizeAngle(Atan2(nodeJack->GetPosition().x_ - node_->GetPosition().x_, nodeJack->GetPosition().z_ - node_->GetPosition().z_) + 180.0f);
+
+    modelUInode->SetRotation(Quaternion(angle, Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
 
     gunsEnabled = false;
 
@@ -379,4 +413,17 @@ void Turret::UpdateLights()
 
     //node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("FlameL")->SetEnabled(gunsEnabled);
     //node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("FlameR")->SetEnabled(gunsEnabled);
+}
+
+void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
+{
+    using namespace Shot;
+
+    //Node *node = static_cast<Node*>(eventData[P_NODE].GetPtr());
+
+    //if(node == node_)
+    {
+        health_ -= 0.5f;
+        DrawHealth();
+    }
 }
