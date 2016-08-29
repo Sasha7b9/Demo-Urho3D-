@@ -80,14 +80,28 @@ void Turret::Start()
     fireModel->SetMaterial(cache->GetResource<Material>("Models/Turret/Fire/AutogunSplash.xml"));
     fireNode->SetEnabled(false);
 
+    light = fireNode->CreateComponent<Light>();
+    light->SetLightMask(LIGHT_POINT);
+    light->SetCastShadows(true);
+    light->SetRange(2.0f);
+    light->SetBrightness(1.0f);
+
     fireNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL")->node_->CreateChild("Fire");
     fireNode->SetScale(scale);
     fireNode->SetPosition({0.0f, -3.5f, 0.0f});
     fireNode->RotateAround(Vector3::ZERO, Quaternion(angle, Vector3::LEFT));
     fireModel = fireNode->CreateComponent<StaticModel>();
     fireModel->SetModel(cache->GetResource<Model>("Models/Turret/Fire/Fire.mdl"));
-    fireModel->SetMaterial(cache->GetResource<Material>("Models/Turret/Fire/AutogunSplash.xml"));
+    Material *material = cache->GetResource<Material>("Models/Turret/Fire/AutogunSplash.xml");
+    material->SetShadowCullMode(CULL_NONE);
+    fireModel->SetMaterial(material);
     fireNode->SetEnabled(false);
+
+    light = fireNode->CreateComponent<Light>();
+    light->SetLightMask(LIGHT_POINT);
+    light->SetCastShadows(true);
+    light->SetRange(2.0f);
+    light->SetBrightness(1.0f);
 
     /*
     ResourceCache *cache = GetSubsystem<ResourceCache>();
@@ -155,6 +169,9 @@ void Turret::AnimateGun(Bone *bone, float timeStep)
 
     nodeFire->SetScale(Random(0.2f, 0.4f));
     nodeFire->RotateAround(Vector3::ZERO, Quaternion(Random(-180.0f, 180.0f), Vector3::BACK));
+
+    Light *light = nodeFire->GetComponent<Light>();
+    light->SetRange(Random(1.0f, 2.0f));
 }
 
 void Turret::SetRotate(float angle)

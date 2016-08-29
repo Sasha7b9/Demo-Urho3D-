@@ -11,7 +11,7 @@
 	<parameter name="Roughness" value="0.5" />
 	<parameter name="Metallic" value="0" />
 	<cull value="none" />
-	<shadowcull value="ccw" />
+	<shadowcull value="none" />
 	<fill value="solid" />
 	<depthbias constant="0" slopescaled="0" />
 	<renderorder value="128" />
