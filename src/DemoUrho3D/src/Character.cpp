@@ -29,6 +29,7 @@
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Scene/SceneEvents.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Input/Input.h>
 
 #include "Character.h"
 #include "Bullet.h"
@@ -126,6 +127,13 @@ void Character::FixedUpdate(float timeStep)
         }
         else
             okToJump_ = true;
+    }
+    
+    Input *input = GetSubsystem<Input>();
+
+    if (input->GetKeyDown(KEY_CTRL))
+    {
+        animCtrl->PlayExclusive("Models/Mutant/Mutant_Death.ani", 0, true, 0.2f);
     }
 
     if ( !onGround_ )
