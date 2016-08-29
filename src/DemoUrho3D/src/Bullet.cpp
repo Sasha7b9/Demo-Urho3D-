@@ -8,8 +8,12 @@
 #include <Urho3D/Graphics/StaticModel.h>
 #include <Urho3D/Graphics/Model.h>
 #include <Urho3D/Graphics/Material.h>
+#include <Urho3D/Graphics/OctreeQuery.h>
+#include <Urho3D/Graphics/Octree.h>
+#include <Urho3D/Math/Ray.h>
 
 #include "Bullet.h"
+
 
 float Bullet::timeStartCalc = 0.0f;
 float Bullet::timeForBuild = 0.0f;
@@ -55,7 +59,7 @@ void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance
 
     material = cache->GetResource<Material>("Models/Turret/Bullet/Bullet.xml");
 
-    float scale = 0.2f;
+    float scale = 0.1f;
 
     Node* node1 = node_->CreateChild();
     StaticModel *model = node1->CreateComponent<StaticModel>();
@@ -68,9 +72,34 @@ void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance
     model->SetMaterial(material);
     node11->RotateAround(Vector3::ZERO, Quaternion(180.0f, Vector3::BACK));
 
-    float maxDeltaShift = 0.3f;
+    float maxDeltaShift = 0.2f;
 
-    Vector3 position = start + direction / direction.Length() * distance / 2 + Vector3(Random(maxDeltaShift) - maxDeltaShift / 2.0f, Random(maxDeltaShift) - maxDeltaShift / 2.0f, Random(maxDeltaShift) - maxDeltaShift / 2.0f);
+    Vector3 st = start + Vector3(Random(maxDeltaShift) - maxDeltaShift / 2.0f, Random(maxDeltaShift) - maxDeltaShift / 2.0f, Random(maxDeltaShift) - maxDeltaShift / 2.0f);
+
+    Ray ray(st + direction, direction);
+    PODVector<RayQueryResult> results;
+    RayOctreeQuery query(results, ray, RAY_TRIANGLE, distance, DRAWABLE_GEOMETRY, 1 + 2);
+    GetScene()->GetComponent<Octree>()->Raycast(query);
+
+    if (results.Size() > 2)
+    {
+        RayQueryResult &result = results[2];
+        Vector3 hitPos = result.position_;
+        float newDistance = (st - hitPos).Length();
+        if (newDistance < distance)
+        {
+            distance = newDistance;
+        }
+        if (result.drawable_->GetViewMask() == 1)
+        {
+            if (result.node_)
+            {
+                result.node_->SendEvent(E_SHOT);
+            }
+        }
+    }
+
+    Vector3 position = st + direction / direction.Length() * distance / 2;
 
     node1->SetScale({scale, 1.0f, distance});
     node1->SetWorldPosition(position);

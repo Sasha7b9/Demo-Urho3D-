@@ -285,6 +285,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\Character.cpp" />
     <ClCompile Include="src\CharacterDemo.cpp" />
+    <ClCompile Include="src\GUI.cpp" />
+    <ClCompile Include="src\lImage.cpp" />
+    <ClCompile Include="src\lSprite.cpp" />
+    <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Touch.cpp" />
     <ClCompile Include="src\Turret.cpp" />
   </ItemGroup>
@@ -292,6 +296,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="src\Bullet.h" />
     <ClInclude Include="src\Character.h" />
     <ClInclude Include="src\CharacterDemo.h" />
+    <ClInclude Include="src\GUI.h" />
+    <ClInclude Include="src\lImage.h" />
+    <ClInclude Include="src\lSprite.h" />
+    <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\Sample.h" />
     <ClInclude Include="src\Touch.h" />
     <ClInclude Include="src\Turret.h" />

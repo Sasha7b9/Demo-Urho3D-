@@ -28,14 +28,18 @@
 #include <Urho3D/Physics/RigidBody.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Scene/SceneEvents.h>
+#include <Urho3D/IO/Log.h>
 
 #include "Character.h"
+#include "Bullet.h"
+#include "GUI.h"
 
 Character::Character(Context* context) :
     LogicComponent(context),
     onGround_(false),
     okToJump_(true),
-    inAirTimer_(0.0f)
+    inAirTimer_(0.0f),
+    health_(100.0f)
 {
     // Only the physics update event is needed: unsubscribe from the rest for optimization
     SetUpdateEventMask(USE_FIXEDUPDATE);
@@ -58,10 +62,17 @@ void Character::Start()
 {
     // Component has been inserted into its scene node. Subscribe to events now
     SubscribeToEvent(GetNode(), E_NODECOLLISION, URHO3D_HANDLER(Character, HandleNodeCollision));
+    // 
+    SubscribeToEvent(E_SHOT, URHO3D_HANDLER(Character, HandleShot));
 }
 
 void Character::FixedUpdate(float timeStep)
 {
+    if (health_ <= 0.0f)
+    {
+        return;
+    }
+
     /// \todo Could cache the components for faster access instead of finding them each frame
     RigidBody* body = GetComponent<RigidBody>();
     AnimationController* animCtrl = node_->GetComponent<AnimationController>(true);
@@ -158,5 +169,16 @@ void Character::HandleNodeCollision(StringHash eventType, VariantMap& eventData)
             if (level > 0.75)
                 onGround_ = true;
         }
+    }
+}
+
+void Character::HandleShot(StringHash eventType, VariantMap& eventData)
+{
+    health_ -= 0.5f;
+    gui->DrawHealth(health_);
+    if (health_ <= 0.0f)
+    {
+        AnimationController *animCtrl = node_->GetComponent<AnimationController>(true);
+        animCtrl->PlayExclusive("Models/Mutant/Mutant_Death.ani", 0, false, 0.2f);
     }
 }

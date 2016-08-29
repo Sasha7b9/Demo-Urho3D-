@@ -35,6 +35,12 @@ class Scene;
 class Character;
 class Touch;
 
+enum
+{
+    VIEW_MASK_HAS_HEALTH = (1 << 0),
+    VIEW_MASK_NOT_HAS_HEALTH = (1 << 1)
+};
+
 /// Moving character example.
 /// This sample demonstrates:
 ///     - Controlling a humanoid character through physics
@@ -55,6 +61,9 @@ public:
 
     /// Setup after engine initialization and before running the main loop.
     virtual void Start();
+
+    ///
+    virtual void Stop();
 
 protected:
     /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.

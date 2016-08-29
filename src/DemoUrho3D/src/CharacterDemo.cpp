@@ -51,10 +51,13 @@
 #include "Bullet.h"
 #include "CharacterDemo.h"
 #include "Touch.h"
+#include "GUI.h"
 
 #include <Urho3D/DebugNew.h>
 
 URHO3D_DEFINE_APPLICATION_MAIN(CharacterDemo)
+
+GUI *gui = nullptr;
 
 CharacterDemo::CharacterDemo(Context* context) :
     Sample(context),
@@ -100,6 +103,15 @@ void CharacterDemo::Start()
     path.Load(file);
 
     //GetSubsystem<Renderer>()->SetDefaultRenderPath(&path);
+
+    gui = new GUI(context_);
+    gui->Init(GetSubsystem<UI>()->GetRoot()->CreateChild("GUI"));
+    gui->DrawHealth(100.0f);
+}
+
+void CharacterDemo::Stop()
+{
+    delete gui;
 }
 
 void CharacterDemo::CreateScene()
@@ -147,7 +159,7 @@ void CharacterDemo::CreateScene()
     object->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
     Material *material = cache->GetResource<Material>("Materials/TerrainTiled.xml");
     object->SetMaterial(material);
-    
+    object->SetViewMask(VIEW_MASK_NOT_HAS_HEALTH);
 
     RigidBody* body = floorNode->CreateComponent<RigidBody>();
     // Use collision layer bit 2 to mark world scenery. This is what we will raycast against to prevent camera from going
@@ -168,6 +180,7 @@ void CharacterDemo::CreateScene()
         object->SetModel(cache->GetResource<Model>("Models/Mushroom.mdl"));
         object->SetMaterial(cache->GetResource<Material>("Materials/Mushroom.xml"));
         object->SetCastShadows(true);
+        object->SetViewMask(VIEW_MASK_NOT_HAS_HEALTH);
 
         RigidBody* body = objectNode->CreateComponent<RigidBody>();
         body->SetCollisionLayer(2);
@@ -235,6 +248,7 @@ void CharacterDemo::CreateCharacter()
     object->SetMaterial(cache->GetResource<Material>("Models/Mutant/Materials/mutant_M.xml"));
     object->SetCastShadows(true);
     adjustNode->CreateComponent<AnimationController>();
+    object->SetViewMask(VIEW_MASK_HAS_HEALTH);
 
     // Set the head bone for manual control
     object->GetSkeleton().GetBone("Mutant:Head")->animated_ = false;
@@ -274,6 +288,7 @@ void CharacterDemo::CreateTurret(const Vector3& position)
     object->SetModel(cache->GetResource<Model>("Models/Turret/Turret.mdl"));
     object->SetMaterial(cache->GetResource<Material>("Models/Turret/Materials/Turret.xml"));
     object->SetCastShadows(true);
+    object->SetViewMask(VIEW_MASK_HAS_HEALTH);
 
     RigidBody* body = objectNode->CreateComponent<RigidBody>();
     body->SetCollisionLayer(2);
