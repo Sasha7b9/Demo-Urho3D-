@@ -116,7 +116,7 @@ void CharacterDemo::CreateScene()
     Zone* zone = zoneNode->CreateComponent<Zone>();
     zone->SetAmbientColor(Color(0.35f, 0.35f, 0.35f));
     zone->SetFogColor(Color(0.5f, 0.5f, 0.7f));
-    zone->SetFogStart(100.0f);
+    zone->SetFogStart(1.0f);
     zone->SetFogEnd(300.0f);
     zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
 
@@ -137,7 +137,7 @@ void CharacterDemo::CreateScene()
     floorNode->SetScale(Vector3(200.0f, 1.0f, 200.0f));
     StaticModel* object = floorNode->CreateComponent<StaticModel>();
     object->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-    Material *material = cache->GetResource<Material>("Materials/StoneTiled.xml");
+    Material *material = cache->GetResource<Material>("Materials/TerrainTiled.xml");
     object->SetMaterial(material);
     
 
