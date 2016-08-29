@@ -171,7 +171,7 @@ void Turret::Update(float timeStep)
 
     Node *nodeJack = GetScene()->GetChild("Jack");
 
-    float angle = NormalizeAngle(Atan2(nodeJack->GetPosition().x_ - node_->GetPosition().x_, nodeJack->GetPosition().z_ - node_->GetPosition().z_) + 180.0f);
+    float angle = NormalizeAngle(Atan2(GetScene()->GetChild("CameraNode")->GetPosition().x_ - node_->GetPosition().x_, GetScene()->GetChild("CameraNode")->GetPosition().z_ - node_->GetPosition().z_) + 180.0f);
 
     modelUInode->SetRotation(Quaternion(angle, Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
 
