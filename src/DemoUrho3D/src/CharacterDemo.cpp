@@ -135,9 +135,9 @@ void CharacterDemo::CreateScene()
     Node* zoneNode = scene_->CreateChild("Zone");
     Zone* zone = zoneNode->CreateComponent<Zone>();
     zone->SetAmbientColor(Color(0.35f, 0.35f, 0.35f));
-    zone->SetFogColor(Color(0.5f, 0.5f, 0.7f));
-    zone->SetFogStart(1.0f);
-    zone->SetFogEnd(300.0f);
+    zone->SetFogColor(Color(0.50f, 0.50f, 0.70f));
+    zone->SetFogStart(40.0f);
+    zone->SetFogEnd(100.0f);
     zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
 
     // Create a directional light with cascaded shadow mapping
@@ -346,7 +346,7 @@ void CharacterDemo::HandleUpdate(StringHash eventType, VariantMap& eventData)
     if (character_)
     {
         // Clear previous controls
-        character_->controls_.Set(CTRL_FORWARD | CTRL_BACK | CTRL_LEFT | CTRL_RIGHT | CTRL_JUMP, false);
+        character_->controls_.Set(CTRL_FORWARD | CTRL_BACK | CTRL_LEFT | CTRL_RIGHT | CTRL_JUMP | CTRL_ATTACK, false);
 
         // Update controls using touch utility class
         if (touch_)
@@ -362,6 +362,7 @@ void CharacterDemo::HandleUpdate(StringHash eventType, VariantMap& eventData)
                 character_->controls_.Set(CTRL_BACK, input->GetKeyDown(KEY_S));
                 character_->controls_.Set(CTRL_LEFT, input->GetKeyDown(KEY_A));
                 character_->controls_.Set(CTRL_RIGHT, input->GetKeyDown(KEY_D));
+                character_->controls_.Set(CTRL_ATTACK, input->GetMouseButtonDown(MOUSEB_LEFT));
             }
             character_->controls_.Set(CTRL_JUMP, input->GetKeyDown(KEY_SPACE));
 

@@ -40,7 +40,9 @@ Character::Character(Context* context) :
     onGround_(false),
     okToJump_(true),
     inAirTimer_(0.0f),
-    health_(100.0f)
+    health_(100.0f),
+    okToAttack_(true),
+    timeAttack_(0.0f)
 {
     // Only the physics update event is needed: unsubscribe from the rest for optimization
     SetUpdateEventMask(USE_FIXEDUPDATE);
@@ -77,6 +79,11 @@ void Character::FixedUpdate(float timeStep)
     /// \todo Could cache the components for faster access instead of finding them each frame
     RigidBody* body = GetComponent<RigidBody>();
     AnimationController* animCtrl = node_->GetComponent<AnimationController>(true);
+
+    if(!okToAttack_ && GetSubsystem<Time>()->GetElapsedTime() >= timeAttack_ + 2.0f)
+    {
+        okToAttack_ = true;
+    }
 
     // Update the in air timer. Reset if grounded
     if (!onGround_)
@@ -122,34 +129,44 @@ void Character::FixedUpdate(float timeStep)
             {
                 body->ApplyImpulse(Vector3::UP * JUMP_FORCE);
                 okToJump_ = false;
-                animCtrl->PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0, false, 0.2f);
+                if(okToAttack_)
+                {
+                    animCtrl->PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0, false, 0.2f);
+                }
             }
         }
         else
             okToJump_ = true;
     }
-    
-    Input *input = GetSubsystem<Input>();
-
-    if (input->GetKeyDown(KEY_CTRL))
-    {
-        animCtrl->PlayExclusive("Models/Mutant/Mutant_Death.ani", 0, true, 0.2f);
-    }
 
     if ( !onGround_ )
     {
-        animCtrl->PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0, false, 0.2f);
+        if(okToAttack_)
+        {
+            animCtrl->PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0, false, 0.2f);
+        }
     }
     else
     {
-        // Play walk animation if moving on ground, otherwise fade it out
-        if (softGrounded && !moveDir.Equals(Vector3::ZERO))
-            animCtrl->PlayExclusive("Models/Mutant/Mutant_Run.ani", 0, true, 0.2f);
-        else
-            animCtrl->PlayExclusive("Models/Mutant/Mutant_Idle0.ani", 0, true, 0.2f);
-
+        if(okToAttack_)
+        {
+            // Play walk animation if moving on ground, otherwise fade it out
+            if(softGrounded && !moveDir.Equals(Vector3::ZERO))
+                animCtrl->PlayExclusive("Models/Mutant/Mutant_Run.ani", 0, true, 0.2f);
+            else
+                animCtrl->PlayExclusive("Models/Mutant/Mutant_Idle0.ani", 0, true, 0.2f);
+        }
         // Set walk animation speed proportional to velocity
         animCtrl->SetSpeed("Models/Mutant/Mutant_Run.ani", planeVelocity.Length() * 0.3f);
+    }
+
+    if(okToAttack_ && controls_.IsDown(CTRL_ATTACK))
+    {
+        animCtrl->StopAll();
+        animCtrl->SetSpeed("Models/Mutant/Mutant_Swipe.ani", 1.0f);
+        animCtrl->PlayExclusive("Models/Mutant/Mutant_Swipe.ani", 0, false, 0.0f);
+        okToAttack_ = false;
+        timeAttack_ = GetSubsystem<Time>()->GetElapsedTime();
     }
 
     // Reset grounded flag for next frame
@@ -182,7 +199,7 @@ void Character::HandleNodeCollision(StringHash eventType, VariantMap& eventData)
 
 void Character::HandleShot(StringHash eventType, VariantMap& eventData)
 {
-    health_ -= 0.5f;
+    health_ -= 0.05f;
     gui->DrawHealth(health_);
     if (health_ <= 0.0f)
     {
