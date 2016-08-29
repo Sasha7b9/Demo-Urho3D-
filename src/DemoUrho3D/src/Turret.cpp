@@ -77,7 +77,12 @@ void Turret::Start()
     fireNode->RotateAround(Vector3::ZERO, Quaternion(angle, Vector3::LEFT));
     StaticModel *fireModel = fireNode->CreateComponent<StaticModel>();
     fireModel->SetModel(cache->GetResource<Model>("Models/Turret/Fire/Fire.mdl"));
-    fireModel->SetMaterial(cache->GetResource<Material>("Models/Turret/Fire/AutogunSplash.xml"));
+    Material *material = cache->GetResource<Material>("Models/Turret/Fire/AutogunSplash.xml");
+    Color color = material->GetShaderParameter("MatDiffColor").GetColor();
+    color.a_ = 0.75f;
+    material->SetShaderParameter("MatDiffColor", Variant(color));
+    material->SetShadowCullMode(CULL_NONE);
+    fireModel->SetMaterial(material);
     fireNode->SetEnabled(false);
 
     light = fireNode->CreateComponent<Light>();
@@ -92,8 +97,6 @@ void Turret::Start()
     fireNode->RotateAround(Vector3::ZERO, Quaternion(angle, Vector3::LEFT));
     fireModel = fireNode->CreateComponent<StaticModel>();
     fireModel->SetModel(cache->GetResource<Model>("Models/Turret/Fire/Fire.mdl"));
-    Material *material = cache->GetResource<Material>("Models/Turret/Fire/AutogunSplash.xml");
-    material->SetShadowCullMode(CULL_NONE);
     fireModel->SetMaterial(material);
     fireNode->SetEnabled(false);
 
@@ -102,6 +105,7 @@ void Turret::Start()
     light->SetCastShadows(true);
     light->SetRange(2.0f);
     light->SetBrightness(1.0f);
+    light->SetColor(Color(1.0f, 1.0f, 0.5f));
 
     /*
     ResourceCache *cache = GetSubsystem<ResourceCache>();
