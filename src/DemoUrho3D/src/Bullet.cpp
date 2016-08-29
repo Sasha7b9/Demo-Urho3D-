@@ -41,7 +41,7 @@ void Bullet::Update(float timeStep)
     {
         Color color = material->GetShaderParameter("MatDiffColor").GetColor();
 
-        color.a_ = ((timeShot + timeLive) - currentTime) / timeLive * 0.2f;
+        color.a_ = ((timeShot + timeLive) - currentTime) / timeLive * 0.1f;
 
         material->SetShaderParameter("MatDiffColor", Variant(color));
     }

@@ -10,6 +10,7 @@
 #include <Urho3D/Audio/Sound.h>
 #include <Urho3D/Audio/SoundSource3D.h>
 #include <Urho3D/Audio/SoundStream.h>
+#include <Urho3D/Graphics/Material.h>
 
 #include "Turret.h"
 #include "Bullet.h"
@@ -63,8 +64,30 @@ void Turret::Start()
     soundSource->SetDistanceAttenuation(0.0f, 20.0f, 1.0f);
     soundSource->SetSoundType(SOUND_EFFECT);
 
-    sound = GetSubsystem<ResourceCache>()->GetResource<Sound>("Models/Turret/Turret.wav");
+    ResourceCache *cache = GetSubsystem<ResourceCache>();
+
+    sound = cache->GetResource<Sound>("Models/Turret/Turret.wav");
     sound->SetLooped(true);
+
+    Node *fireNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR")->node_->CreateChild("Fire");
+    float scale = 0.4f;
+    fireNode->SetScale(scale);
+    fireNode->SetPosition({0.0f, -3.5f, 0.0f});
+    float angle = 90.0f;
+    fireNode->RotateAround(Vector3::ZERO, Quaternion(angle, Vector3::LEFT));
+    StaticModel *fireModel = fireNode->CreateComponent<StaticModel>();
+    fireModel->SetModel(cache->GetResource<Model>("Models/Turret/Fire/Fire.mdl"));
+    fireModel->SetMaterial(cache->GetResource<Material>("Models/Turret/Fire/AutogunSplash.xml"));
+    fireNode->SetEnabled(false);
+
+    fireNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL")->node_->CreateChild("Fire");
+    fireNode->SetScale(scale);
+    fireNode->SetPosition({0.0f, -3.5f, 0.0f});
+    fireNode->RotateAround(Vector3::ZERO, Quaternion(angle, Vector3::LEFT));
+    fireModel = fireNode->CreateComponent<StaticModel>();
+    fireModel->SetModel(cache->GetResource<Model>("Models/Turret/Fire/Fire.mdl"));
+    fireModel->SetMaterial(cache->GetResource<Material>("Models/Turret/Fire/AutogunSplash.xml"));
+    fireNode->SetEnabled(false);
 
     /*
     ResourceCache *cache = GetSubsystem<ResourceCache>();
@@ -125,6 +148,13 @@ void Turret::AnimateGun(Bone *bone, float timeStep)
 {
     rotateGun += timeStep * 360.0f * 2.0f;
     bone->node_->SetRotation(Quaternion(90.0f, Vector3::RIGHT) * Quaternion(rotateGun, Vector3::UP));
+
+    Node *nodeFire = bone->node_->GetChild("Fire");
+
+    nodeFire->SetEnabled(true);
+
+    nodeFire->SetScale(Random(0.2f, 0.4f));
+    nodeFire->RotateAround(Vector3::ZERO, Quaternion(Random(-180.0f, 180.0f), Vector3::BACK));
 }
 
 void Turret::SetRotate(float angle)
@@ -318,6 +348,11 @@ void Turret::UpdateLights()
         //nodeLightR->GetComponent<Light>()->SetColor(Color(0.5f * Sin(time * 1e3) + 0.5f, 0.0f, 0.0f));
         nodeLightL->GetComponent<Light>()->SetColor(Color(Random(1.0f), 0.0f, 0.0f));
         nodeLightR->GetComponent<Light>()->SetColor(Color(Random(1.0f), 0.0f, 0.0f));
+    }
+    else
+    {
+        node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL")->node_->GetChild("Fire")->SetEnabled(false);
+        node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR")->node_->GetChild("Fire")->SetEnabled(false);
     }
 
     //node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("FlameL")->SetEnabled(gunsEnabled);
