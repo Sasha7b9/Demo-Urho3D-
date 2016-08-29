@@ -31,6 +31,7 @@
 #include <Urho3D/Graphics/Octree.h>
 #include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/Zone.h>
+#include <Urho3D/Graphics/RenderPath.h>
 #include <Urho3D/Input/Controls.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/FileSystem.h>
@@ -92,6 +93,13 @@ void CharacterDemo::Start()
 
     // Set the mouse mode to use in the sample
     Sample::InitMouseMode(MM_RELATIVE);
+
+    XMLFile *file = GetSubsystem<ResourceCache>()->GetResource<XMLFile>("CoreData/RenderPaths/Deferred.xml");
+
+    RenderPath path;
+    path.Load(file);
+
+    //GetSubsystem<Renderer>()->SetDefaultRenderPath(&path);
 }
 
 void CharacterDemo::CreateScene()

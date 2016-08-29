@@ -61,7 +61,7 @@ void Turret::Start()
     lightShot->SetPosition(position);
 
     SoundSource3D* soundSource = node_->CreateComponent<SoundSource3D>();
-    soundSource->SetDistanceAttenuation(0.0f, 20.0f, 1.0f);
+    soundSource->SetDistanceAttenuation(0.0f, detectDistance * 1.2f, 1.0f);
     soundSource->SetSoundType(SOUND_EFFECT);
 
     ResourceCache *cache = GetSubsystem<ResourceCache>();
@@ -222,7 +222,7 @@ void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
 
     float delta = NormalizeAngle(angle - bone->node_->GetWorldRotation().YawAngle());
 
-    if (Abs(delta) < 25.0f)
+    if (Abs(delta) < (detectDistance - GetDistance(GetScene()->GetChild("Jack"))) / detectDistance * 45.0f)
     {
         Bone *bone1 = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR");
         Bone *bone2 = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL");

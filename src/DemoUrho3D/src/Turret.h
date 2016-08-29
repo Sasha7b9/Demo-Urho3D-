@@ -66,5 +66,5 @@ private:
     float rateOfFire = 15.0f;
     const float detectDistance = 20.0f;
 
-    Sound *sound;
+    Sound *sound = nullptr;
 };
