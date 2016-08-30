@@ -162,7 +162,7 @@ void CharacterDemo::CreateScene()
     // Create the floor object
     Node* floorNode = scene_->CreateChild("Floor");
     floorNode->SetPosition(Vector3(0.0f, -0.5f, 0.0f));
-    floorNode->SetScale(Vector3(200.0f, 1.0f, 200.0f));
+    floorNode->SetScale(Vector3(1000.0f, 1.0f, 1000.0f));
     StaticModel* object = floorNode->CreateComponent<StaticModel>();
     object->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
     Material *material = cache->GetResource<Material>("Materials/TerrainTiled.xml");
@@ -199,7 +199,7 @@ void CharacterDemo::CreateScene()
     const unsigned NUM_GUNS = 200;
     for(unsigned i = 0; i < NUM_GUNS; ++i)
     {
-        CreateTurret(Vector3(Random(180.0f) - 90.0f, 0.0f, Random(180.0f) - 90.0f));
+        CreateTurret(Vector3(Random(-100.0f, 100.0f), 0.0f, Random(-100.0f, 100.0f)));
         //CreateTurret(Vector3(5.0f, 0.0f, 5.0f));
     }
 
