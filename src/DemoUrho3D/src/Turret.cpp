@@ -177,7 +177,7 @@ void Turret::Update(float timeStep)
 
 void Turret::GradientToTarget(float timeStep)
 {
-    static const float speedRotate = 100.0f;
+    static const float speedRotate = 10.0f;
     float maxAngle = speedRotate * timeStep;
 
     Node *nodeJack = GetScene()->GetChild("Jack");
@@ -189,8 +189,9 @@ void Turret::GradientToTarget(float timeStep)
 
     Bone *bone = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone2");
 
-    Vector3 dirTurret = bone->node_->GetWorldDirection();
-    float angleTurret = Asin(dirTurret.y_);
+    Quaternion rotTurret = bone->node_->GetWorldRotation();
+
+    float angleTurret = rotTurret.PitchAngle();
 
     float dAngle = angleToTarget - angleTurret;
     if (Abs(dAngle) > maxAngle)
