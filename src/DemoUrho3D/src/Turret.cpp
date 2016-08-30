@@ -114,16 +114,16 @@ void Turret::Start()
     modelUInode = node_->CreateChild("UI");
     StaticModel *modelUI = modelUInode->CreateComponent<StaticModel>();
     modelUI->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
-    materialGUI = cache->GetResource<Material>("Materials/Stone.xml")->Clone();
+    materialGUI = cache->GetResource<Material>("Models/Turret/GUI/GUI.xml")->Clone();
     modelUI->SetMaterial(materialGUI);
-    modelUInode->SetPosition({0.0f, 6.0f, 0.0f});
-    modelUInode->SetScale({6.0f, 1.0f, 0.5f});
+    modelUInode->SetPosition({0.0f, 4.0f, 0.0f});
+    modelUInode->SetScale({6.0f, 1.0f, 0.25f});
     modelUInode->SetRotation(Quaternion(90.0f, Vector3::LEFT));
     
     materialGUI->SetShadowCullMode(CULL_NONE);
 
     sprite = new lSprite(context_);
-    sprite->SetSize(200, 20);
+    sprite->SetSize(200, 5);
 
     DrawHealth();
 
@@ -154,10 +154,8 @@ void Turret::Start()
 
 void Turret::DrawHealth()
 {
-    Color color = Color::GRAY;
-    color.a_ = 0.5f;
-    sprite->Clear(color);
-    sprite->FillRectangle(0, 0, (int)(200.0f * health_ / 100.0f), 20, Color::RED);
+    sprite->Clear(Color::GRAY);
+    sprite->FillRectangle(0, 0, (int)(200.0f * health_ / 100.0f), 5, Color::RED);
 
 
     materialGUI->SetTexture(TU_DIFFUSE, sprite->GetTexture());
