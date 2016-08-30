@@ -169,23 +169,37 @@ void Turret::Update(float timeStep)
     {
         RotateToTarget(nodeJack, maxAngle, timeStep);
         beaconEnabled = true;
-        GradientToTarget();
+        GradientToTarget(timeStep);
     }
 
     UpdateLights();
 }
 
-void Turret::GradientToTarget()
+void Turret::GradientToTarget(float timeStep)
 {
+    static const float speedRotate = 100.0f;
+    float maxAngle = speedRotate * timeStep;
+
     Node *nodeJack = GetScene()->GetChild("Jack");
     Vector3 positionJack = nodeJack->GetPosition();
 
-    Vector3 direction = positionJack - node_->GetPosition();
-    direction.Normalize();
-
-    float angle = Asin(direction.y_);
+    Vector3 dirToTarget = positionJack - node_->GetPosition();
+    dirToTarget.Normalize();
+    float angleToTarget = Asin(dirToTarget.y_);
 
     Bone *bone = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone2");
+
+    Vector3 dirTurret = bone->node_->GetWorldDirection();
+    float angleTurret = Asin(dirTurret.y_);
+
+    float dAngle = angleToTarget - angleTurret;
+    if (Abs(dAngle) > maxAngle)
+    {
+        dAngle = maxAngle * Sign(dAngle);
+    }
+
+    float angle = angleTurret + dAngle;
+
     bone->node_->SetRotation(Quaternion(angle, Vector3::RIGHT));
 }
 

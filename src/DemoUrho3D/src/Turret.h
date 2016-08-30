@@ -62,7 +62,7 @@ private:
     void DrawHealth();
 
     ///
-    void GradientToTarget();
+    void GradientToTarget(float timeStep);
 
     ///
     void HandleShot(StringHash eventType, VariantMap& eventData);
