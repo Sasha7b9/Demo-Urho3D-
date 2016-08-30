@@ -67,21 +67,21 @@ private:
     ///
     void HandleShot(StringHash eventType, VariantMap& eventData);
 
-    float dirOnTarget = 0.0f;
-    float worldRotationDefault = 0.0f;
-    float rotateGun = 0.0f;
-    bool beaconEnabled = false;
-    bool gunsEnabled = false;
+    float dirOnTarget_ = 0.0f;
+    float worldRotationDefault_ = 0.0f;
+    float rotateGun_ = 0.0f;
+    bool beaconEnabled_ = false;
+    bool gunsEnabled_ = false;
 
-    float timePrevShot = 0.0f;
-    float rateOfFire = 15.0f;
+    float timePrevShot_ = 0.0f;
+    float rateOfFire_ = 15.0f;
     const float detectDistance = 20.0f;
 
     float health_ = 100.0f;
 
-    Sound *sound = nullptr;
+    Sound *sound_ = nullptr;
 
-    SharedPtr<lSprite> sprite = nullptr;
-    SharedPtr<Material> materialGUI = nullptr;
-    Node *modelUInode = nullptr;
+    SharedPtr<lSprite> sprite_ = nullptr;
+    SharedPtr<Material> materialGUI_ = nullptr;
+    Node *modelUInode_ = nullptr;
 };
