@@ -127,29 +127,8 @@ void Turret::Start()
 
     DrawHealth();
 
-    /*
-    ResourceCache *cache = GetSubsystem<ResourceCache>();
-
-    Node *flameNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("FlameL");
-    flameNode->SetPosition({1.5f, 1.0f, -3.5f});
-    flameNode->SetRotation(Quaternion(90.0f, Vector3::LEFT));
-    ParticleEmitter *emitter = flameNode->CreateComponent<ParticleEmitter>();
-    emitter->SetEffect(cache->GetResource<ParticleEffect>("Models/Turret/Particle/Fire.xml"));
-
-    flameNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("FlameR");
-    flameNode->SetPosition({-1.5f, 1.0f, -3.5f});
-    flameNode->SetRotation(Quaternion(90.0f, Vector3::LEFT));
-    emitter = flameNode->CreateComponent<ParticleEmitter>();
-    emitter->SetEffect(cache->GetResource<ParticleEffect>("Models/Turret/Particle/Fire.xml"));
-    */
-
-    /*
-    Node *cubeNode = node_->GetComponent<AnimatedModdel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("");
-    StaticModel *cube = cubeNode->CreateComponent<StaticModel>();
-    cube->SetModel(GetSubsystem<ResourceCache>()->GetResource<Model>("Models/Box.mdl"));
-    cubeNode->SetScale(0.25f);
-    cubeNode->SetPosition(position);
-    */
+    Bone *bone = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone2");
+    bone->node_->SetRotation(Quaternion(0.5f, Vector3::RIGHT));
 }
 
 void Turret::DrawHealth()
@@ -190,9 +169,24 @@ void Turret::Update(float timeStep)
     {
         RotateToTarget(nodeJack, maxAngle, timeStep);
         beaconEnabled = true;
+        GradientToTarget();
     }
 
     UpdateLights();
+}
+
+void Turret::GradientToTarget()
+{
+    Node *nodeJack = GetScene()->GetChild("Jack");
+    Vector3 positionJack = nodeJack->GetPosition();
+
+    Vector3 direction = positionJack - node_->GetPosition();
+    direction.Normalize();
+
+    float angle = Asin(direction.y_);
+
+    Bone *bone = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone2");
+    bone->node_->SetRotation(Quaternion(angle, Vector3::RIGHT));
 }
 
 void Turret::AnimateGun(Bone *bone, float timeStep)

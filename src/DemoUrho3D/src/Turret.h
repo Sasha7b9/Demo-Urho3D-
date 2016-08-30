@@ -61,6 +61,10 @@ private:
     ///
     void DrawHealth();
 
+    ///
+    void GradientToTarget();
+
+    ///
     void HandleShot(StringHash eventType, VariantMap& eventData);
 
     float dirOnTarget = 0.0f;
