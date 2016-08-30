@@ -119,6 +119,7 @@ void Turret::Start()
     modelUInode->SetPosition({0.0f, 4.0f, 0.0f});
     modelUInode->SetScale({6.0f, 1.0f, 0.25f});
     modelUInode->SetRotation(Quaternion(90.0f, Vector3::LEFT));
+    modelUInode->SetEnabled(false);
     
     materialGUI->SetShadowCullMode(CULL_NONE);
 
@@ -426,11 +427,8 @@ void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
 {
     using namespace Shot;
 
-    //Node *node = static_cast<Node*>(eventData[P_NODE].GetPtr());
+    health_ -= 0.5f;
+    DrawHealth();
 
-    //if(node == node_)
-    {
-        health_ -= 0.5f;
-        DrawHealth();
-    }
+    node_->GetChild("UI")->SetEnabled(true);
 }
