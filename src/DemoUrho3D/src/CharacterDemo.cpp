@@ -32,6 +32,7 @@
 #include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/Zone.h>
 #include <Urho3D/Graphics/RenderPath.h>
+#include <Urho3D/Graphics/Skybox.h>
 #include <Urho3D/Input/Controls.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/FileSystem.h>
@@ -152,6 +153,12 @@ void CharacterDemo::CreateScene()
     light->SetSpecularIntensity(0.5f);
     light->SetBrightness(0.85f);
 
+    Node *skyNode = scene_->CreateChild("StarSky");
+    skyNode->SetScale(500.0f);
+    Skybox* skyBox = skyNode->CreateComponent<Skybox>();
+    skyBox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+    skyBox->SetMaterial(cache->GetResource<Material>("Materials/StarSky.xml"));
+
     // Create the floor object
     Node* floorNode = scene_->CreateChild("Floor");
     floorNode->SetPosition(Vector3(0.0f, -0.5f, 0.0f));
@@ -268,7 +275,7 @@ void CharacterDemo::CreateCharacter()
 
     // Set a capsule shape for collision
     CollisionShape* shape = objectNode->CreateComponent<CollisionShape>();
-    shape->SetCapsule(0.7f, 1.8f, Vector3(0.0f, 0.9f, 0.0f));
+    shape->SetCapsule(0.9f, 1.8f, Vector3(0.0f, 0.9f, 0.0f));
 
     // Create the character logic component, which takes care of steering the rigidbody
     // Remember it so that we can set the controls. Use a WeakPtr because the scene hierarchy already owns it
