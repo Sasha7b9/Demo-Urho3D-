@@ -53,7 +53,7 @@ void Bullet::Update(float timeStep)
 
 void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance)
 {
-    timeLive = Random(0.3f) + 0.1f;
+    timeLive = 0.3f;
 
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
