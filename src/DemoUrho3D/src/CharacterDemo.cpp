@@ -33,6 +33,7 @@
 #include <Urho3D/Graphics/Zone.h>
 #include <Urho3D/Graphics/RenderPath.h>
 #include <Urho3D/Graphics/Skybox.h>
+#include <Urho3D/Graphics/Terrain.h>
 #include <Urho3D/Input/Controls.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/FileSystem.h>
@@ -130,7 +131,7 @@ void CharacterDemo::CreateScene()
     //cameraNode_ = new Node(context_);
     cameraNode_ = scene_->CreateChild("CameraNode");
     Camera* camera = cameraNode_->CreateComponent<Camera>();
-    camera->SetFarClip(300.0f);
+    camera->SetFarClip(500.0f);
     GetSubsystem<Renderer>()->SetViewport(0, new Viewport(context_, scene_, camera));
 
     // Create static scene content. First create a zone for ambient lighting and fog control
@@ -138,9 +139,9 @@ void CharacterDemo::CreateScene()
     Zone* zone = zoneNode->CreateComponent<Zone>();
     zone->SetAmbientColor(Color(0.35f, 0.35f, 0.35f));
     zone->SetFogColor(Color(0.50f, 0.50f, 0.70f));
-    zone->SetFogStart(40.0f);
-    zone->SetFogEnd(100.0f);
-    zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
+    zone->SetFogStart(300.0f);
+    zone->SetFogEnd(500.0f);
+    zone->SetBoundingBox(BoundingBox(-2000.0f, 2000.0f));
 
     // Create a directional light with cascaded shadow mapping
     Node* lightNode = scene_->CreateChild("DirectionalLight");
@@ -151,15 +152,18 @@ void CharacterDemo::CreateScene()
     light->SetShadowBias(BiasParameters(0.00025f, 0.5f));
     light->SetShadowCascade(CascadeParameters(10.0f, 50.0f, 200.0f, 0.0f, 0.8f));
     light->SetSpecularIntensity(0.5f);
-    light->SetBrightness(0.85f);
+    //light->SetBrightness(0.85f);
 
+    /*
     Node *skyNode = scene_->CreateChild("StarSky");
     skyNode->SetScale(500.0f);
     Skybox* skyBox = skyNode->CreateComponent<Skybox>();
     skyBox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
     skyBox->SetMaterial(cache->GetResource<Material>("Materials/StarSky.xml"));
+    */
 
     // Create the floor object
+    /*
     Node* floorNode = scene_->CreateChild("Floor");
     floorNode->SetPosition(Vector3(0.0f, -0.5f, 0.0f));
     floorNode->SetScale(Vector3(1000.0f, 1.0f, 1000.0f));
@@ -175,13 +179,30 @@ void CharacterDemo::CreateScene()
     body->SetCollisionLayer(2);
     CollisionShape* shape = floorNode->CreateComponent<CollisionShape>();
     shape->SetBox(Vector3::ONE);
+    */
+
+    Node* terrainNode = scene_->CreateChild("Terrain");
+    terrainNode->SetPosition(Vector3::ZERO);
+    Terrain* terrain = terrainNode->CreateComponent<Terrain>();
+    terrain->SetPatchSize(64);
+    terrain->SetSpacing(Vector3(2.0f, 0.25f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
+    terrain->SetSmoothing(true);
+    terrain->SetHeightMap(cache->GetResource<Image>("Textures/HeightMap.png"));
+    terrain->SetMaterial(cache->GetResource<Material>("Materials/TerraTiled.xml"));
+
+    RigidBody *body = terrainNode->CreateComponent<RigidBody>();
+    body->SetCollisionLayer(2);
+    CollisionShape* shape = terrainNode->CreateComponent<CollisionShape>();
+    shape->SetTerrain();
 
     // Create mushrooms of varying sizes
     const unsigned NUM_MUSHROOMS = 10;
     for (unsigned i = 0; i < NUM_MUSHROOMS; ++i)
     {
         Node* objectNode = scene_->CreateChild("Mushroom");
-        objectNode->SetPosition(Vector3(Random(180.0f) - 90.0f, 0.0f, Random(180.0f) - 90.0f));
+        Vector3 position = Vector3(Random(180.0f) - 90.0f, 0.0f, Random(180.0f) - 90.0f);
+        position.y_ = terrain->GetHeight(position) - 0.1f;
+        objectNode->SetPosition(position);
         objectNode->SetRotation(Quaternion(0.0f, Random(360.0f), 0.0f));
         objectNode->SetScale(2.0f + Random(5.0f));
         StaticModel* object = objectNode->CreateComponent<StaticModel>();
@@ -199,7 +220,9 @@ void CharacterDemo::CreateScene()
     const unsigned NUM_GUNS = 200;
     for(unsigned i = 0; i < NUM_GUNS; ++i)
     {
-        CreateTurret(Vector3(Random(-100.0f, 100.0f), 0.0f, Random(-100.0f, 100.0f)));
+        Vector3 position(Random(-100.0f, 100.0f), 0.0f, Random(-100.0f, 100.0f));
+        position.y_ = terrain->GetHeight(position);
+        CreateTurret(position);
         //CreateTurret(Vector3(5.0f, 0.0f, 5.0f));
     }
 
@@ -240,7 +263,7 @@ void CharacterDemo::CreateCharacter()
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
     Node* objectNode = scene_->CreateChild("Jack");
-    objectNode->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
+    objectNode->SetPosition(Vector3(0.0f, 10.0f, 0.0f));
 
     SoundListener *listener = objectNode->CreateComponent<SoundListener>();
     GetSubsystem<Audio>()->SetListener(listener);
