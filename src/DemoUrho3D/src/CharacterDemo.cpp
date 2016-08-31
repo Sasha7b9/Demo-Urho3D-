@@ -154,13 +154,13 @@ void CharacterDemo::CreateScene()
     light->SetSpecularIntensity(0.5f);
     //light->SetBrightness(0.85f);
 
-    /*
+    
     Node *skyNode = scene_->CreateChild("StarSky");
     skyNode->SetScale(500.0f);
     Skybox* skyBox = skyNode->CreateComponent<Skybox>();
     skyBox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
     skyBox->SetMaterial(cache->GetResource<Material>("Materials/StarSky.xml"));
-    */
+    
 
     // Create the floor object
     /*
@@ -217,10 +217,10 @@ void CharacterDemo::CreateScene()
         shape->SetTriangleMesh(object->GetModel(), 0);
     }
 
-    const unsigned NUM_GUNS = 200;
+    const unsigned NUM_GUNS = 500;
     for(unsigned i = 0; i < NUM_GUNS; ++i)
     {
-        Vector3 position(Random(-100.0f, 100.0f), 0.0f, Random(-100.0f, 100.0f));
+        Vector3 position(Random(-200.0f, 200.0f), 0.0f, Random(-200.0f, 200.0f));
         position.y_ = terrain->GetHeight(position);
         CreateTurret(position);
         //CreateTurret(Vector3(5.0f, 0.0f, 5.0f));
