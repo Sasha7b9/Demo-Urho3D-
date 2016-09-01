@@ -37,7 +37,4 @@ private:
     static float timeForBuild;
     SharedPtr<Material> material = nullptr;
     float timeLive = 0.0f;
-
-    static Material* mat;
-    static bool first;
 };

@@ -18,9 +18,6 @@
 float Bullet::timeStartCalc = 0.0f;
 float Bullet::timeForBuild = 0.0f;
 
-Material* Bullet::mat;
-bool Bullet::first = true;
-
 Bullet::Bullet(Context* context) :
     LogicComponent(context)
 {
@@ -56,15 +53,9 @@ void Bullet::Update(float timeStep)
 
 void Bullet::Shot(const Vector3& start, const Vector3& direction, float distance)
 {
-    if (first)
-    {
-        mat = gCache->GetResource<Material>("Models/Turret/Bullet/Bullet.xml");
-        first = false;
-    }
-
     timeLive = 0.3f;
 
-    material = mat->Clone();
+    material = gCache->GetResource<Material>("Models/Turret/Bullet/Bullet.xml")->Clone();
 
     Node* node1 = node_->CreateChild();
     StaticModel *model = node1->CreateComponent<StaticModel>();
