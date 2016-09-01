@@ -57,6 +57,8 @@
 
 #include <Urho3D/DebugNew.h>
 
+#include "GlobalVars.h"
+
 URHO3D_DEFINE_APPLICATION_MAIN(CharacterDemo)
 
 GUI *gui = nullptr;
@@ -77,7 +79,9 @@ CharacterDemo::~CharacterDemo()
 
 void CharacterDemo::Start()
 {
-    GetSubsystem<ResourceCache>()->AddResourceDir(GetSubsystem<FileSystem>()->GetProgramDir() + "DemoData");
+    gTime = GetSubsystem<Time>();
+    gCache = GetSubsystem<ResourceCache>();
+    gCache->AddResourceDir(GetSubsystem<FileSystem>()->GetProgramDir() + "DemoData");
 
     // Execute base class startup
     Sample::Start();
@@ -99,7 +103,7 @@ void CharacterDemo::Start()
     // Set the mouse mode to use in the sample
     Sample::InitMouseMode(MM_RELATIVE);
 
-    XMLFile *file = GetSubsystem<ResourceCache>()->GetResource<XMLFile>("CoreData/RenderPaths/Deferred.xml");
+    XMLFile *file = gCache->GetResource<XMLFile>("CoreData/RenderPaths/Deferred.xml");
 
     RenderPath path;
     path.Load(file);
@@ -130,6 +134,7 @@ void CharacterDemo::CreateScene()
     // so that it won't be destroyed and recreated, and we don't have to redefine the viewport on load
     //cameraNode_ = new Node(context_);
     cameraNode_ = scene_->CreateChild("CameraNode");
+    gCameraNode = cameraNode_;
     Camera* camera = cameraNode_->CreateComponent<Camera>();
     camera->SetFarClip(500.0f);
     GetSubsystem<Renderer>()->SetViewport(0, new Viewport(context_, scene_, camera));
@@ -260,17 +265,17 @@ void CharacterDemo::CreateScene()
 
 void CharacterDemo::CreateCharacter()
 {
-    ResourceCache* cache = GetSubsystem<ResourceCache>();
+    ResourceCache* cache = gCache;
 
-    Node* objectNode = scene_->CreateChild("Jack");
-    objectNode->SetPosition(Vector3(0.0f, 10.0f, 0.0f));
+    gNodeJack = scene_->CreateChild("Jack");
+    gNodeJack->SetPosition(Vector3(0.0f, 10.0f, 0.0f));
 
-    SoundListener *listener = objectNode->CreateComponent<SoundListener>();
+    SoundListener *listener = gNodeJack->CreateComponent<SoundListener>();
     GetSubsystem<Audio>()->SetListener(listener);
     GetSubsystem<Audio>()->SetMasterGain(SOUND_EFFECT, 1.0f);
 
     // spin node
-    Node* adjustNode = objectNode->CreateChild("AdjNode");
+    Node* adjustNode = gNodeJack->CreateChild("AdjNode");
     adjustNode->SetRotation( Quaternion(180, Vector3(0,1,0) ) );
     
     // Create the rendering component + animation controller
@@ -285,7 +290,7 @@ void CharacterDemo::CreateCharacter()
     object->GetSkeleton().GetBone("Mutant:Head")->animated_ = false;
 
     // Create rigidbody, and set non-zero mass so that the body becomes dynamic
-    RigidBody* body = objectNode->CreateComponent<RigidBody>();
+    RigidBody* body = gNodeJack->CreateComponent<RigidBody>();
     body->SetCollisionLayer(1);
     body->SetMass(1.0f);
 
@@ -297,18 +302,18 @@ void CharacterDemo::CreateCharacter()
     body->SetCollisionEventMode(COLLISION_ALWAYS);
 
     // Set a capsule shape for collision
-    CollisionShape* shape = objectNode->CreateComponent<CollisionShape>();
+    CollisionShape* shape = gNodeJack->CreateComponent<CollisionShape>();
     shape->SetCapsule(0.9f, 1.8f, Vector3(0.0f, 0.9f, 0.0f));
 
     // Create the character logic component, which takes care of steering the rigidbody
     // Remember it so that we can set the controls. Use a WeakPtr because the scene hierarchy already owns it
     // and keeps it alive as long as it's not removed from the hierarchy
-    character_ = objectNode->CreateComponent<Character>();
+    character_ = gNodeJack->CreateComponent<Character>();
 }
 
 void CharacterDemo::CreateTurret(const Vector3& position)
 {
-    ResourceCache* cache = GetSubsystem<ResourceCache>();
+    ResourceCache* cache = gCache;
 
     float scale = 0.4f;
 
@@ -336,7 +341,7 @@ void CharacterDemo::CreateInstructions()
 {
     return;
 
-    ResourceCache* cache = GetSubsystem<ResourceCache>();
+    ResourceCache* cache = gCache;
     UI* ui = GetSubsystem<UI>();
 
     // Construct new Text object, set string to display and font to use
@@ -445,9 +450,8 @@ void CharacterDemo::HandleUpdate(StringHash eventType, VariantMap& eventData)
                 scene_->LoadXML(loadFile);
                 // After loading we have to reacquire the weak pointer to the Character component, as it has been recreated
                 // Simply find the character's scene node by name as there's only one of them
-                Node* characterNode = scene_->GetChild("Jack", true);
-                if (characterNode)
-                    character_ = characterNode->GetComponent<Character>();
+                if (gNodeJack)
+                    character_ = gNodeJack->GetComponent<Character>();
             }
         }
     }

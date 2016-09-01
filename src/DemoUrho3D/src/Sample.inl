@@ -41,6 +41,8 @@
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/IO/Log.h>
 
+#include "GlobalVars.h"
+
 Sample::Sample(Context* context) :
     Application(context),
     yaw_(0.0f),
@@ -104,7 +106,7 @@ void Sample::InitTouchInput()
 {
     touchEnabled_ = true;
 
-    ResourceCache* cache = GetSubsystem<ResourceCache>();
+    ResourceCache* cache = gCache;
     Input* input = GetSubsystem<Input>();
     XMLFile* layout = cache->GetResource<XMLFile>("UI/ScreenJoystick_Samples.xml");
     const String& patchString = GetScreenJoystickPatchString();
@@ -269,7 +271,7 @@ void Sample::HandleKeyDown(StringHash eventType, VariantMap& eventData)
             if (screenJoystickSettingsIndex_ == M_MAX_UNSIGNED)
             {
                 // Lazy initialization
-                ResourceCache* cache = GetSubsystem<ResourceCache>();
+                ResourceCache* cache = gCache;
                 screenJoystickSettingsIndex_ = input->AddScreenJoystick(cache->GetResource<XMLFile>("UI/ScreenJoystickSettings_Samples.xml"), cache->GetResource<XMLFile>("UI/DefaultStyle.xml"));
             }
             else

@@ -34,6 +34,7 @@
 #include "Character.h"
 #include "Bullet.h"
 #include "GUI.h"
+#include "GlobalVars.h"
 
 Character::Character(Context* context) :
     LogicComponent(context),
@@ -80,7 +81,7 @@ void Character::FixedUpdate(float timeStep)
     RigidBody* body = GetComponent<RigidBody>();
     AnimationController* animCtrl = node_->GetComponent<AnimationController>(true);
 
-    if(!okToAttack_ && GetSubsystem<Time>()->GetElapsedTime() >= timeAttack_ + 2.0f)
+    if(!okToAttack_ && gTime->GetElapsedTime() >= timeAttack_ + 2.0f)
     {
         okToAttack_ = true;
     }
@@ -166,7 +167,7 @@ void Character::FixedUpdate(float timeStep)
         animCtrl->SetSpeed("Models/Mutant/Mutant_Swipe.ani", 1.0f);
         animCtrl->PlayExclusive("Models/Mutant/Mutant_Swipe.ani", 0, false, 0.0f);
         okToAttack_ = false;
-        timeAttack_ = GetSubsystem<Time>()->GetElapsedTime();
+        timeAttack_ = gTime->GetElapsedTime();
     }
 
     // Reset grounded flag for next frame

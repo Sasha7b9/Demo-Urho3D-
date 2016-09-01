@@ -2,6 +2,7 @@
 
 #include <Urho3D/Scene/LogicComponent.h>
 #include <Urho3D/Audio/Sound.h>
+#include <Urho3D/Audio/SoundSource3D.h>
 
 using namespace Urho3D;
 
@@ -84,4 +85,21 @@ private:
     SharedPtr<lSprite> sprite_ = nullptr;
     SharedPtr<Material> materialGUI_ = nullptr;
     Node *modelUInode_ = nullptr;
+    Node *nodeLightL_ = nullptr;
+    Node *nodeLightR_ = nullptr;
+    Node *nodeBeacon_ = nullptr;
+    Node *nodeFireR_ = nullptr;
+    Node *nodeFireL_ = nullptr;
+    Node *nodeBoneTower_ = nullptr;
+    float distanceToJack = 0.0f;
+    Node *nodeBoneGunR_ = nullptr;
+    Node *nodeBoneGurL_ = nullptr;
+    Node *nodeBoneGunsGradient_ = nullptr;
+    Bone *boneGunR_ = nullptr;
+    Bone *boneGunL_ = nullptr;
+
+    SoundSource3D *soundSource_ = nullptr;
+
+    static float timeUpdate;
+    static float timeFromPrevBegin;
 };

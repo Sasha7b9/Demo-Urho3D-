@@ -16,6 +16,10 @@
 #include "Turret.h"
 #include "Bullet.h"
 #include "lSprite.h"
+#include "GlobalVars.h"
+
+float Turret::timeUpdate = 0.0f;
+float Turret::timeFromPrevBegin = 0.0f;
 
 Turret::Turret(Context* context) :
     LogicComponent(context)
@@ -32,8 +36,10 @@ void Turret::Start()
 {
     SubscribeToEvent(GetNode(), E_SHOT, URHO3D_HANDLER(Turret, HandleShot));
 
-    Node *lightNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("Beacon");
-    Light *light = lightNode->CreateComponent<Light>();
+    nodeBoneTower_ = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_;
+
+    nodeBeacon_ = nodeBoneTower_->CreateChild("Beacon");
+    Light *light = nodeBeacon_->CreateComponent<Light>();
     light->SetLightType(LIGHT_POINT);
     light->SetCastShadows(false);
     light->SetRange(0.33f);
@@ -42,44 +48,47 @@ void Turret::Start()
 
     Vector3 position = {0.0f, 2.5f, -0.075f};
 
-    lightNode->SetPosition(position);
+    nodeBeacon_->SetPosition(position);
 
-    Node *lightShot = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("LightL");
-    light = lightShot->CreateComponent<Light>();
+    nodeLightL_ = nodeBoneTower_->CreateChild("LightL");
+    light = nodeLightL_->CreateComponent<Light>();
     light->SetLightType(LIGHT_POINT);
     light->SetCastShadows(true);
     light->SetRange(0.5f);
     light->SetBrightness(10.0f);
 
     position = {2.4f, 0.7f, -1.1f};
-    lightShot->SetPosition(position);
+    nodeLightL_->SetPosition(position);
 
-    lightShot = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->CreateChild("LightR");
-    light = lightShot->CreateComponent<Light>();
+    nodeLightR_ = nodeBoneTower_->CreateChild("LightR");
+    light = nodeLightR_->CreateComponent<Light>();
     light->SetLightMask(LIGHT_POINT);
     light->SetCastShadows(true);
     light->SetRange(0.5f);
     light->SetBrightness(10.0f);
 
     position = {-2.4f, 0.7f, -1.1f};
-    lightShot->SetPosition(position);
+    nodeLightR_->SetPosition(position);
 
-    SoundSource3D* soundSource = node_->CreateComponent<SoundSource3D>();
-    soundSource->SetDistanceAttenuation(0.0f, detectDistance * 1.2f, 1.0f);
-    soundSource->SetSoundType(SOUND_EFFECT);
+    soundSource_ = node_->CreateComponent<SoundSource3D>();
+    soundSource_->SetDistanceAttenuation(0.0f, detectDistance * 1.2f, 1.0f);
+    soundSource_->SetSoundType(SOUND_EFFECT);
 
-    ResourceCache *cache = GetSubsystem<ResourceCache>();
+    ResourceCache *cache = gCache;
 
     sound_ = cache->GetResource<Sound>("Models/Turret/Turret.wav");
     sound_->SetLooped(true);
 
-    Node *fireNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR")->node_->CreateChild("Fire");
+    boneGunR_ = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR");
+    nodeBoneGunR_ = boneGunR_->node_;
+
+    nodeFireR_ = nodeBoneGunR_->CreateChild("Fire");
     float scale = 0.4f;
-    fireNode->SetScale(scale);
-    fireNode->SetPosition({0.0f, -3.5f, 0.0f});
+    nodeFireR_->SetScale(scale);
+    nodeFireR_->SetPosition({0.0f, -3.5f, 0.0f});
     float angle = 90.0f;
-    fireNode->RotateAround(Vector3::ZERO, Quaternion(angle, Vector3::LEFT));
-    StaticModel *fireModel = fireNode->CreateComponent<StaticModel>();
+    nodeFireR_->RotateAround(Vector3::ZERO, Quaternion(angle, Vector3::LEFT));
+    StaticModel *fireModel = nodeFireR_->CreateComponent<StaticModel>();
     fireModel->SetModel(cache->GetResource<Model>("Models/Turret/Fire/Fire.mdl"));
     Material *material = cache->GetResource<Material>("Models/Turret/Fire/AutogunSplash.xml");
     Color color = material->GetShaderParameter("MatDiffColor").GetColor();
@@ -87,24 +96,27 @@ void Turret::Start()
     material->SetShaderParameter("MatDiffColor", Variant(color));
     material->SetShadowCullMode(CULL_NONE);
     fireModel->SetMaterial(material);
-    fireNode->SetEnabled(false);
+    nodeFireR_->SetEnabled(false);
 
-    light = fireNode->CreateComponent<Light>();
+    light = nodeFireR_->CreateComponent<Light>();
     light->SetLightMask(LIGHT_POINT);
     light->SetCastShadows(true);
     light->SetRange(2.0f);
     light->SetBrightness(1.0f);
 
-    fireNode = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL")->node_->CreateChild("Fire");
-    fireNode->SetScale(scale);
-    fireNode->SetPosition({0.0f, -3.5f, 0.0f});
-    fireNode->RotateAround(Vector3::ZERO, Quaternion(angle, Vector3::LEFT));
-    fireModel = fireNode->CreateComponent<StaticModel>();
+    boneGunL_ = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL");
+    nodeBoneGurL_ = boneGunL_->node_;
+
+    nodeFireL_ = nodeBoneGurL_->CreateChild("Fire");
+    nodeFireL_->SetScale(scale);
+    nodeFireL_->SetPosition({0.0f, -3.5f, 0.0f});
+    nodeFireL_->RotateAround(Vector3::ZERO, Quaternion(angle, Vector3::LEFT));
+    fireModel = nodeFireL_->CreateComponent<StaticModel>();
     fireModel->SetModel(cache->GetResource<Model>("Models/Turret/Fire/Fire.mdl"));
     fireModel->SetMaterial(material);
-    fireNode->SetEnabled(false);
+    nodeFireL_->SetEnabled(false);
 
-    light = fireNode->CreateComponent<Light>();
+    light = nodeFireL_->CreateComponent<Light>();
     light->SetLightMask(LIGHT_POINT);
     light->SetCastShadows(true);
     light->SetRange(2.0f);
@@ -128,52 +140,66 @@ void Turret::Start()
 
     DrawHealth();
 
-    Bone *bone = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone2");
-    bone->node_->SetRotation(Quaternion(0.5f, Vector3::RIGHT));
+
+
+    nodeBoneGunsGradient_ = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone2")->node_;
+    nodeBoneGunsGradient_->SetRotation(Quaternion(0.5f, Vector3::RIGHT));
 }
 
 void Turret::DrawHealth()
 {
     sprite_->Clear(Color::GRAY);
     sprite_->FillRectangle(0, 0, (int)(200.0f * health_ / 100.0f), 5, Color::RED);
-
-
     materialGUI_->SetTexture(TU_DIFFUSE, sprite_->GetTexture());
 }
 
 void Turret::Update(float timeStep)
 {
+    if ((gTime->GetElapsedTime() - timeFromPrevBegin) >= 1.0f)
+    {
+        URHO3D_LOGINFOF("Time update = %f", timeUpdate);
+        timeUpdate = 0.0f;
+        timeFromPrevBegin = gTime->GetElapsedTime();
+    }
+
+    float timeEnter = gTime->GetElapsedTime();
+
     float speed = 10.0f;
 
     float maxAngle = speed * timeStep;
 
-    Node *nodeJack = GetScene()->GetChild("Jack");
-
-    float angle = NormalizeAngle(Atan2(GetScene()->GetChild("CameraNode")->GetPosition().x_ - node_->GetPosition().x_, GetScene()->GetChild("CameraNode")->GetPosition().z_ - node_->GetPosition().z_) + 180.0f);
-
-    modelUInode_->SetRotation(Quaternion(angle, Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
+    if (health_ != 100.0f)
+    {
+        Vector3 posCamera = gCameraNode->GetPosition();
+        Vector3 position = node_->GetPosition();
+        float angle = NormalizeAngle(Atan2(posCamera.x_ - position.x_, posCamera.z_ - position.z_) + 180.0f);
+        modelUInode_->SetRotation(Quaternion(angle, Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
+    }
 
     gunsEnabled_ = false;
 
-    if (GetDistance(nodeJack) > detectDistance)
+    distanceToJack = GetDistance(gNodeJack);
+
+    if (distanceToJack > detectDistance)
     {
-        RotateToDefault(maxAngle);
+        //RotateToDefault(maxAngle);
         beaconEnabled_ = false;
 
-        SoundSource3D *soundSource = node_->GetComponent<SoundSource3D>();
-        if (soundSource->IsPlaying())
+        if (soundSource_->IsPlaying())
         {
-            soundSource->Stop();
+            soundSource_->Stop();
         }
     }
     else
     {
-        RotateToTarget(nodeJack, maxAngle, timeStep);
+        RotateToTarget(gNodeJack, maxAngle, timeStep);
         beaconEnabled_ = true;
         GradientToTarget(timeStep);
     }
 
     UpdateLights();
+
+    timeUpdate += (gTime->GetElapsedTime() - timeEnter);
 }
 
 void Turret::GradientToTarget(float timeStep)
@@ -181,16 +207,13 @@ void Turret::GradientToTarget(float timeStep)
     static const float speedRotate = 10.0f;
     float maxAngle = speedRotate * timeStep;
 
-    Node *nodeJack = GetScene()->GetChild("Jack");
-    Vector3 positionJack = nodeJack->GetPosition();
+    Vector3 positionJack = gNodeJack->GetPosition();
 
     Vector3 dirToTarget = positionJack - node_->GetPosition();
     dirToTarget.Normalize();
     float angleToTarget = Asin(dirToTarget.y_);
 
-    Bone *bone = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone2");
-
-    Quaternion rotTurret = bone->node_->GetWorldRotation();
+    Quaternion rotTurret = nodeBoneGunsGradient_->GetWorldRotation();
 
     float angleTurret = rotTurret.PitchAngle();
 
@@ -202,7 +225,7 @@ void Turret::GradientToTarget(float timeStep)
 
     float angle = angleTurret + dAngle;
 
-    bone->node_->SetRotation(Quaternion(angle, Vector3::RIGHT));
+    nodeBoneGunsGradient_->SetRotation(Quaternion(angle, Vector3::RIGHT));
 }
 
 void Turret::AnimateGun(Bone *bone, float timeStep)
@@ -256,30 +279,24 @@ void Turret::RotateToDefault(float maxAngle)
 
 void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
 {
-    Bone *bone = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1");
-
     Vector3 position = node_->GetPosition();
     Vector3 positionTarget = node->GetPosition();
 
     float angle = NormalizeAngle(Atan2(positionTarget.x_ - position.x_, positionTarget.z_ - position.z_) + 180.0f);
 
-    float delta = NormalizeAngle(angle - bone->node_->GetWorldRotation().YawAngle());
+    float delta = NormalizeAngle(angle - nodeBoneTower_->GetWorldRotation().YawAngle());
 
-    if (Abs(delta) < (detectDistance - GetDistance(GetScene()->GetChild("Jack"))) / detectDistance * 45.0f)
+    if (Abs(delta) < (detectDistance - distanceToJack) / detectDistance * 45.0f)
     {
-        Bone *bone1 = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR");
-        Bone *bone2 = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL");
+        AnimateGun(boneGunR_, timeStep);
+        AnimateGun(boneGunL_, timeStep);
 
-        AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR"), timeStep);
-        AnimateGun(node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL"), timeStep);
-
-        SoundSource3D *soundSource = node_->GetComponent<SoundSource3D>();
-        if (!soundSource->IsPlaying())
+        if (!soundSource_->IsPlaying())
         {
-            soundSource->Play(sound_);
+            soundSource_->Play(sound_);
         }
 
-        float currentTime = GetSubsystem<Time>()->GetElapsedTime();
+        float currentTime = gTime->GetElapsedTime();
 
         if(currentTime >= timePrevShot_ + 1.0f / rateOfFire_)
         {
@@ -288,12 +305,12 @@ void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
             SharedPtr<Node> nodeBullet1(GetScene()->CreateChild("Bullet"));
             SharedPtr<Bullet> bullet1(nodeBullet1->CreateComponent<Bullet>());
 
-            bullet1->Shot(bone1->node_->GetWorldPosition(), -bone1->node_->GetParent()->GetWorldDirection(), detectDistance);
+            bullet1->Shot(nodeBoneGurL_->GetWorldPosition(), -nodeBoneGurL_->GetParent()->GetWorldDirection(), detectDistance);
 
             SharedPtr<Node> nodeBullet2(GetScene()->CreateChild("Bullet"));
             SharedPtr<Bullet> bullet2(nodeBullet2->CreateComponent<Bullet>());
 
-            bullet2->Shot(bone2->node_->GetWorldPosition(), -bone2->node_->GetParent()->GetWorldDirection(), detectDistance);
+            bullet2->Shot(nodeBoneGunR_->GetWorldPosition(), -nodeBoneGunR_->GetParent()->GetWorldDirection(), detectDistance);
         }
 
         gunsEnabled_ = true;
@@ -305,10 +322,9 @@ void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
     }
     else
     {
-        SoundSource3D *soundSource = node_->GetComponent<SoundSource3D>();
-        if (soundSource->IsPlaying())
+        if (soundSource_->IsPlaying())
         {
-            soundSource->Stop();
+            soundSource_->Stop();
         }
     }
 
@@ -324,7 +340,7 @@ void Turret::RotateToTarget(Node *node, float maxAngle, float timeStep)
         delta = maxAngle;
     }
 
-    bone->node_->SetWorldRotation(Quaternion(bone->node_->GetWorldRotation().YawAngle() + delta * sign, Vector3::UP));
+    nodeBoneTower_->SetWorldRotation(Quaternion(nodeBoneTower_->GetWorldRotation().YawAngle() + delta * sign, Vector3::UP));
 }
 
 float Turret::GetDistance(Node *node)
@@ -398,29 +414,21 @@ float Turret::NormalizeAngle(float angle)
 
 void Turret::UpdateLights()
 {
-    Node *nodeLightL = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightL");
-    Node *nodeLightR = node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("LightR");
+    float time = gTime->GetElapsedTime();
 
-    float time = GetSubsystem<Time>()->GetElapsedTime();
-
-    node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("Beacon")->SetEnabled(beaconEnabled_);
-    nodeLightL->SetEnabled(gunsEnabled_);
-    nodeLightR->SetEnabled(gunsEnabled_);
+    nodeBeacon_->SetEnabled(beaconEnabled_);
+    nodeLightL_->SetEnabled(gunsEnabled_);
+    nodeLightR_->SetEnabled(gunsEnabled_);
     if (gunsEnabled_)
     {
-        //nodeLightL->GetComponent<Light>()->SetColor(Color(0.5f * Cos(time * 1e3) + 0.5f, 0.0f, 0.0f));
-        //nodeLightR->GetComponent<Light>()->SetColor(Color(0.5f * Sin(time * 1e3) + 0.5f, 0.0f, 0.0f));
-        nodeLightL->GetComponent<Light>()->SetColor(Color(Random(1.0f), 0.0f, 0.0f));
-        nodeLightR->GetComponent<Light>()->SetColor(Color(Random(1.0f), 0.0f, 0.0f));
+        nodeLightL_->GetComponent<Light>()->SetColor(Color(Random(1.0f), 0.0f, 0.0f));
+        nodeLightR_->GetComponent<Light>()->SetColor(Color(Random(1.0f), 0.0f, 0.0f));
     }
     else
     {
-        node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunL")->node_->GetChild("Fire")->SetEnabled(false);
-        node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("GunR")->node_->GetChild("Fire")->SetEnabled(false);
+        nodeFireL_->SetEnabled(false);
+        nodeFireR_->SetEnabled(false);
     }
-
-    //node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("FlameL")->SetEnabled(gunsEnabled);
-    //node_->GetComponent<AnimatedModel>()->GetSkeleton().GetBone("Bone1")->node_->GetChild("FlameR")->SetEnabled(gunsEnabled);
 }
 
 void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
@@ -429,6 +437,5 @@ void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
 
     health_ -= 0.5f;
     DrawHealth();
-
-    node_->GetChild("UI")->SetEnabled(true);
+    modelUInode_->SetEnabled(true);
 }
