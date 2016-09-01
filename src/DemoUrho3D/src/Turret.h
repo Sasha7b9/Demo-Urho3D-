@@ -100,6 +100,8 @@ private:
 
     SoundSource3D *soundSource_ = nullptr;
 
+    bool isDead = false;
+
     static float timeUpdate;
     static float timeFromPrevBegin;
 };

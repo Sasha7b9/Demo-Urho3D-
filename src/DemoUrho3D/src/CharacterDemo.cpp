@@ -54,6 +54,7 @@
 #include "CharacterDemo.h"
 #include "Touch.h"
 #include "GUI.h"
+#include "DeadObject.h"
 
 #include <Urho3D/DebugNew.h>
 
@@ -71,6 +72,7 @@ CharacterDemo::CharacterDemo(Context* context) :
     Character::RegisterObject(context);
     Turret::RegisterObject(context);
     Bullet::RegisterObject(context);
+    DeadObject::RegisterObject(context);
 }
 
 CharacterDemo::~CharacterDemo()

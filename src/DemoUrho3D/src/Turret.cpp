@@ -11,12 +11,15 @@
 #include <Urho3D/Audio/SoundSource3D.h>
 #include <Urho3D/Audio/SoundStream.h>
 #include <Urho3D/Graphics/Material.h>
+#include <Urho3D/Physics/CollisionShape.h>
+#include <Urho3D/Physics/RigidBody.h>
 
 
 #include "Turret.h"
 #include "Bullet.h"
 #include "lSprite.h"
 #include "GlobalVars.h"
+#include "DeadObject.h"
 
 float Turret::timeUpdate = 0.0f;
 float Turret::timeFromPrevBegin = 0.0f;
@@ -155,51 +158,54 @@ void Turret::DrawHealth()
 
 void Turret::Update(float timeStep)
 {
-    if ((gTime->GetElapsedTime() - timeFromPrevBegin) >= 1.0f)
+    if(!isDead)
     {
-        URHO3D_LOGINFOF("Time update = %f", timeUpdate);
-        timeUpdate = 0.0f;
-        timeFromPrevBegin = gTime->GetElapsedTime();
-    }
-
-    float timeEnter = gTime->GetElapsedTime();
-
-    float speed = 10.0f;
-
-    float maxAngle = speed * timeStep;
-
-    if (health_ != 100.0f)
-    {
-        Vector3 posCamera = gCameraNode->GetPosition();
-        Vector3 position = node_->GetPosition();
-        float angle = NormalizeAngle(Atan2(posCamera.x_ - position.x_, posCamera.z_ - position.z_) + 180.0f);
-        modelUInode_->SetRotation(Quaternion(angle, Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
-    }
-
-    gunsEnabled_ = false;
-
-    distanceToJack = GetDistance(gNodeJack);
-
-    if (distanceToJack > detectDistance)
-    {
-        //RotateToDefault(maxAngle);
-        beaconEnabled_ = false;
-
-        if (soundSource_->IsPlaying())
+        if((gTime->GetElapsedTime() - timeFromPrevBegin) >= 1.0f)
         {
-            soundSource_->Stop();
+            URHO3D_LOGINFOF("Time update = %f", timeUpdate);
+            timeUpdate = 0.0f;
+            timeFromPrevBegin = gTime->GetElapsedTime();
         }
-    }
-    else
-    {
-        RotateToTarget(gNodeJack, maxAngle, timeStep);
-        beaconEnabled_ = true;
-        GradientToTarget(timeStep);
-    }
 
-    UpdateLights();
+        float timeEnter = gTime->GetElapsedTime();
 
-    timeUpdate += (gTime->GetElapsedTime() - timeEnter);
+        float speed = 10.0f;
+
+        float maxAngle = speed * timeStep;
+
+        if(health_ != 100.0f)
+        {
+            Vector3 posCamera = gCameraNode->GetPosition();
+            Vector3 position = node_->GetPosition();
+            float angle = NormalizeAngle(Atan2(posCamera.x_ - position.x_, posCamera.z_ - position.z_) + 180.0f);
+            modelUInode_->SetRotation(Quaternion(angle, Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
+        }
+
+        gunsEnabled_ = false;
+
+        distanceToJack = GetDistance(gNodeJack);
+
+        if(distanceToJack > detectDistance)
+        {
+            //RotateToDefault(maxAngle);
+            beaconEnabled_ = false;
+
+            if(soundSource_->IsPlaying())
+            {
+                soundSource_->Stop();
+            }
+        }
+        else
+        {
+            RotateToTarget(gNodeJack, maxAngle, timeStep);
+            beaconEnabled_ = true;
+            GradientToTarget(timeStep);
+        }
+
+        UpdateLights();
+
+        timeUpdate += (gTime->GetElapsedTime() - timeEnter);
+    }
 }
 
 void Turret::GradientToTarget(float timeStep)
@@ -433,9 +439,48 @@ void Turret::UpdateLights()
 
 void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
 {
-    using namespace Shot;
+    if(!isDead)
+    {
+        if(health_ > 0.0f)
+        {
+            health_ -= 5.0f;
+            DrawHealth();
+            modelUInode_->SetEnabled(true);
+        }
+        else
+        {
+            Node *node = nodeBoneTower_;
+            Node *nodeParent = nodeBoneTower_->GetParent();
+            GetScene()->RemoveChild(node);
+            modelUInode_->SetEnabled(false);
+            Vector3 scale = nodeBoneTower_->GetWorldScale();
+            Vector3 position = nodeBoneTower_->GetWorldPosition();
+            position.y_ += 1;
+            GetScene()->AddChild(nodeBoneTower_);
+            
+            nodeBoneTower_->SetWorldScale(scale);
+            nodeBoneTower_->SetWorldPosition(position);
 
-    health_ -= 0.5f;
-    DrawHealth();
-    modelUInode_->SetEnabled(true);
+            RigidBody *body = nodeBoneTower_->CreateComponent<RigidBody>();
+            body->SetCollisionLayer(2);
+            body->SetMass(1.0f);
+            CollisionShape *shape = nodeBoneTower_->CreateComponent<CollisionShape>();
+            shape->SetBox(Vector3::ONE);
+
+            body->SetLinearVelocity({Random(-5.0f, 5.0f), 10.0f, Random(-5.0f, 5.0f)});
+            float angular = 5.0f;
+            body->SetAngularVelocity(Vector3(Random(angular), Random(angular), Random(angular)));
+
+            SharedPtr<DeadObject> deadObject(nodeBoneTower_->CreateComponent<DeadObject>());
+
+            gunsEnabled_ = false;
+
+            Update(0.0001f);
+
+            soundSource_->Stop();
+
+            isDead = true;
+        }
+    }
 }
+
