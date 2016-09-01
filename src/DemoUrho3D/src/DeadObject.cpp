@@ -22,7 +22,9 @@ void DeadObject::Update(float timeStep)
 
     if(body->GetLinearVelocity() == Vector3::ZERO && body->GetAngularVelocity() == Vector3::ZERO)
     {
-        node_->Remove();
-        //GetScene()->RemoveChild(node_);
+        Vector3 position = node_->GetPosition();
+        position.y_ = -1000.0f;
+        node_->SetPosition(position);
+        node_->SetEnabled(false);
     }
 }

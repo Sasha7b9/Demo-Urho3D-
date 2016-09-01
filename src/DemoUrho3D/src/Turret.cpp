@@ -449,16 +449,13 @@ void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
         }
         else
         {
-            Node *node = nodeBoneTower_;
-            Node *nodeParent = nodeBoneTower_->GetParent();
-            GetScene()->RemoveChild(node);
             modelUInode_->SetEnabled(false);
             Vector3 scale = nodeBoneTower_->GetWorldScale();
             Vector3 position = nodeBoneTower_->GetWorldPosition();
-            position.y_ += 1;
             GetScene()->AddChild(nodeBoneTower_);
             
             nodeBoneTower_->SetWorldScale(scale);
+            position.y_ += 1.0f;
             nodeBoneTower_->SetWorldPosition(position);
 
             RigidBody *body = nodeBoneTower_->CreateComponent<RigidBody>();
@@ -478,6 +475,8 @@ void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
             Update(0.0001f);
 
             soundSource_->Stop();
+
+            node_->GetComponent<AnimatedModel>()->SetAnimationEnabled(false);
 
             isDead = true;
         }
