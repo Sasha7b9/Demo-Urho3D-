@@ -32,5 +32,6 @@ tmp
 *.sdf
 *.ilk
 out/CoreData/Shaders/HLSL/Cache/
+out/DemoData/Shaders/HLSL/Cache/
 *.suo
 *.opensdf
