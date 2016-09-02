@@ -24,6 +24,7 @@
 #include <Urho3D/Core/ProcessUtils.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Graphics/AnimatedModel.h>
+#include <Urho3D/Graphics/StaticModelGroup.h>
 #include <Urho3D/Graphics/AnimationController.h>
 #include <Urho3D/Graphics/Camera.h>
 #include <Urho3D/Graphics/Light.h>
@@ -226,6 +227,7 @@ void CharacterDemo::CreateScene()
         shape->SetTriangleMesh(object->GetModel(), 0);
     }
 
+    /*
     const unsigned NUM_GUNS = 15;
     for(unsigned i = 0; i < NUM_GUNS; ++i)
     {
@@ -233,6 +235,39 @@ void CharacterDemo::CreateScene()
         position.y_ = terrain->GetHeight(position);
         CreateTurret(position);
     }
+    */
+
+    //for(int i = 0; i < 1; i++)
+    //{
+    
+        Node *nodeGroup = scene_->CreateChild("group");
+        StaticModelGroup *modelGroup = nodeGroup->CreateComponent<StaticModelGroup>();
+        modelGroup->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+        modelGroup->SetMaterial(cache->GetResource<Material>("Materials/Grass.xml"));
+        
+
+        const unsigned NUM_BOXES = 1000;
+        for(unsigned i = 0; i < NUM_BOXES; ++i)
+        {
+            //Vector3 scale(1.0f, 1.0f, 1.0f);
+            float scale = 2.5f;
+
+            Node* objectNode = scene_->CreateChild("Box");
+            float size = 25.0f;
+            Vector3 position(Random(-size, size), 0.0f, Random(-size, size));
+            position.y_ = terrain->GetHeight(position) + 0.5f * scale - 0.05f;
+            objectNode->SetPosition(position);
+            objectNode->SetRotation(Quaternion(Random(-180.0f, 180.0f), Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
+            objectNode->SetScale(scale);
+            modelGroup->AddInstanceNode(objectNode);
+            /*
+            StaticModel* object = objectNode->CreateComponent<StaticModel>();
+            object->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+            object->SetMaterial(cache->GetResource<Material>("Materials/Grass.xml"));
+            object->SetCastShadows(false);
+*/            
+        }
+    //}
 }
 
 void CharacterDemo::CreateCharacter()

@@ -1,0 +1,7 @@
+<material>
+    <technique name="Techniques/DiffAlpha.xml" quality="1" />
+    <texture unit="diffuse" name="Textures/Grass.png" />
+    <parameter name="MatDiffColor" value="0.0 0.7 0.0   1.0" />
+    <cull value="none" /> 
+    <shadowcull value="none" /> 
+</material>

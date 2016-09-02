@@ -96,16 +96,16 @@ void VS(float4 iPos : POSITION,
     float4x3 modelMatrix = iModelMatrix;
     float3 worldPos = GetWorldPos(modelMatrix);
 	
-	oChannelFactorDisp.xyz = float3(1.0, 0.0, 0.0);
-	oChannelFactorDisp.w = 0.5;
+	oChannelFactorDisp.xyz = cChannelFactor.xyz;
+	oChannelFactorDisp.w = cDisplacement;
 
 	// VTF
 	oDisplaceTexel = tDisplaceMap.SampleLevel(sDisplaceMap, iTexCoord.xy, 0.0);
-	float d = float(oDisplaceTexel.x);
+	float d = float(oDisplaceTexel.x * cChannelFactor.x + oDisplaceTexel.y * cChannelFactor.y + oDisplaceTexel.z * cChannelFactor.z);
 	
 	// SHIFT VERTEX BY DISPLACE
 	oNormal = GetWorldNormal(modelMatrix);
-	oPos = GetClipPos(worldPos + oNormal * d * 0.5);
+	oPos = GetClipPos(worldPos + oNormal * d * cDisplacement);
 	//oPos = GetClipPos(worldPos);
 	
     oWorldPos = float4(worldPos, GetDepth(oPos));
@@ -133,7 +133,7 @@ void VS(float4 iPos : POSITION,
 
         #ifdef SHADOW
             // Shadow projection: transform from world space to shadow space
-//            GetShadowPos(projWorldPos, oShadowPos[0]);
+            GetShadowPos(projWorldPos, oShadowPos);
         #endif
 
         #ifdef SPOTLIGHT
