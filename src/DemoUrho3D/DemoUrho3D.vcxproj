@@ -216,7 +216,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;URHO3D_MINIDUMPS;URHO3D_FILEWATCHER;URHO3D_PROFILING;URHO3D_LOGGING;URHO3D_THREADING;URHO3D_ANGELSCRIPT;URHO3D_LUA;TOLUA_RELEASE;URHO3D_NAVIGATION;URHO3D_NETWORK;URHO3D_PHYSICS;URHO3D_URHO2D;URHO3D_CXX11;_CRT_SECURE_NO_WARNINGS;HAVE_STDINT_H;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;URHO3D_MINIDUMPS;URHO3D_FILEWATCHER;URHO3D_PROFILING;URHO3D_LOGGING;URHO3D_THREADING;URHO3D_ANGELSCRIPT;URHO3D_LUA;TOLUA_RELEASE;URHO3D_NAVIGATION;URHO3D_NETWORK;URHO3D_PHYSICS;URHO3D_URHO2D;URHO3D_CXX11;_CRT_SECURE_NO_WARNINGS;HAVE_STDINT_H;CMAKE_INTDIR="Debug";DX11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
@@ -285,6 +285,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\Character.cpp" />
     <ClCompile Include="src\CharacterDemo.cpp" />
+    <ClCompile Include="src\CustomLogic.cpp" />
     <ClCompile Include="src\DeadObject.cpp" />
     <ClCompile Include="src\GlobalVars.cpp" />
     <ClCompile Include="src\GUI.cpp" />
@@ -298,6 +299,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="src\Bullet.h" />
     <ClInclude Include="src\Character.h" />
     <ClInclude Include="src\CharacterDemo.h" />
+    <ClInclude Include="src\CustomLogic.h" />
     <ClInclude Include="src\DeadObject.h" />
     <ClInclude Include="src\GlobalVars.h" />
     <ClInclude Include="src\GUI.h" />

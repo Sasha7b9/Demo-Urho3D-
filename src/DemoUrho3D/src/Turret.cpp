@@ -20,6 +20,7 @@
 #include "lSprite.h"
 #include "GlobalVars.h"
 #include "DeadObject.h"
+#include "CustomLogic.h"
 
 float Turret::timeUpdate = 0.0f;
 float Turret::timeFromPrevBegin = 0.0f;
@@ -466,6 +467,15 @@ void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
             soundSource_->Stop();
 
             isDead = true;
+
+#ifdef DX11
+            SharedPtr<Node> node(GetScene()->CreateChild("Boom"));
+            StaticModel *model = node->CreateComponent<StaticModel>();
+            model->SetModel(gCache->GetResource<Model>("Effects/Explosion/Models/Icosphere.mdl"));
+            model->SetMaterial(gCache->GetResource<Material>("Effects/Explosion/Materials/BoomMaterial.xml"));
+            node->CreateComponent<CustomLogic>();
+            node->SetScale(10.0f);
+#endif
         }
     }
 }

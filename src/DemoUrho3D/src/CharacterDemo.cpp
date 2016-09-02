@@ -55,6 +55,7 @@
 #include "Touch.h"
 #include "GUI.h"
 #include "DeadObject.h"
+#include "CustomLogic.h"
 
 #include <Urho3D/DebugNew.h>
 
@@ -73,6 +74,7 @@ CharacterDemo::CharacterDemo(Context* context) :
     Turret::RegisterObject(context);
     Bullet::RegisterObject(context);
     DeadObject::RegisterObject(context);
+    CustomLogic::RegisterObject(context);
 }
 
 CharacterDemo::~CharacterDemo()

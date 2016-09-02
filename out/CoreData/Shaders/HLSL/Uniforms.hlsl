@@ -125,6 +125,8 @@ cbuffer MaterialVS : register(b4)
 {
     float4 cUOffset;
     float4 cVOffset;
+    float3 cChannelFactor;
+    float cDisplacement;
 }
 #endif
 
