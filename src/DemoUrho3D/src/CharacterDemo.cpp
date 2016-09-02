@@ -192,7 +192,7 @@ void CharacterDemo::CreateScene()
     terrainNode->SetPosition(Vector3::ZERO);
     Terrain* terrain = terrainNode->CreateComponent<Terrain>();
     terrain->SetPatchSize(64);
-    terrain->SetSpacing(Vector3(2.0f, 0.25f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
+    terrain->SetSpacing(Vector3(2.0f, 0.05f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
     terrain->SetSmoothing(true);
     terrain->SetHeightMap(cache->GetResource<Image>("Textures/HeightMap.png"));
     terrain->SetMaterial(cache->GetResource<Material>("Materials/TerraTiled.xml"));
@@ -224,45 +224,13 @@ void CharacterDemo::CreateScene()
         shape->SetTriangleMesh(object->GetModel(), 0);
     }
 
-    const unsigned NUM_GUNS = 500;
+    const unsigned NUM_GUNS = 15;
     for(unsigned i = 0; i < NUM_GUNS; ++i)
     {
-        Vector3 position(Random(-200.0f, 200.0f), 0.0f, Random(-200.0f, 200.0f));
+        Vector3 position(Random(25.0f), 0.0f, Random(25.0f));
         position.y_ = terrain->GetHeight(position);
         CreateTurret(position);
-        //CreateTurret(Vector3(5.0f, 0.0f, 5.0f));
     }
-
-    /*
-
-    turrelModel= turrelNode->GetComponent<AnimatedModel>();
-    spawnBone = turrelModel->GetSkeleton().GetBone("SpawnBone");
-    spawnBone ->animated_ = false;
-    spawnBone->node
-
-    // Create movable boxes. Let them fall from the sky at first
-    const unsigned NUM_BOXES = 100;
-    for (unsigned i = 0; i < NUM_BOXES; ++i)
-    {
-        float scale = Random(2.0f) + 0.5f;
-
-        Node* objectNode = scene_->CreateChild("Box");
-        objectNode->SetPosition(Vector3(Random(180.0f) - 90.0f, Random(10.0f) + 10.0f, Random(180.0f) - 90.0f));
-        objectNode->SetRotation(Quaternion(Random(360.0f), Random(360.0f), Random(360.0f)));
-        objectNode->SetScale(scale);
-        StaticModel* object = objectNode->CreateComponent<StaticModel>();
-        object->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-        object->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
-        object->SetCastShadows(true);
-
-        RigidBody* body = objectNode->CreateComponent<RigidBody>();
-        body->SetCollisionLayer(2);
-        // Bigger boxes will be heavier and harder to move
-        body->SetMass(scale * 2.0f);
-        CollisionShape* shape = objectNode->CreateComponent<CollisionShape>();
-        shape->SetBox(Vector3::ONE);
-    }
-    */
 }
 
 void CharacterDemo::CreateCharacter()

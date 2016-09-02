@@ -450,25 +450,14 @@ void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
         else
         {
             modelUInode_->SetEnabled(false);
-            Vector3 scale = nodeBoneTower_->GetWorldScale();
-            Vector3 position = nodeBoneTower_->GetWorldPosition();
-            GetScene()->AddChild(nodeBoneTower_);
             
-            nodeBoneTower_->SetWorldScale(scale);
-            position.y_ += 1.0f;
-            nodeBoneTower_->SetWorldPosition(position);
+            RunDetail(nodeBoneTower_, {0.0f, 1.0f, 0.0f});
 
-            RigidBody *body = nodeBoneTower_->CreateComponent<RigidBody>();
-            body->SetCollisionLayer(2);
-            body->SetMass(1.0f);
-            CollisionShape *shape = nodeBoneTower_->CreateComponent<CollisionShape>();
-            shape->SetBox(Vector3::ONE);
+            RunDetail(nodeBoneGunsGradient_, {0.0f, 2.0f, 0.0f});
 
-            body->SetLinearVelocity({Random(-5.0f, 5.0f), 10.0f, Random(-5.0f, 5.0f)});
-            float angular = 5.0f;
-            body->SetAngularVelocity(Vector3(Random(angular), Random(angular), Random(angular)));
+            RunDetail(nodeBoneGunR_, {1.0f, 1.0f, 1.0f});
 
-            SharedPtr<DeadObject> deadObject(nodeBoneTower_->CreateComponent<DeadObject>());
+            RunDetail(nodeBoneGurL_, {-1.0f, 1.0f, -1.0f});
 
             gunsEnabled_ = false;
 
@@ -476,10 +465,30 @@ void Turret::HandleShot(StringHash eventType, VariantMap& eventData)
 
             soundSource_->Stop();
 
-            node_->GetComponent<AnimatedModel>()->SetAnimationEnabled(false);
-
             isDead = true;
         }
     }
 }
 
+void Turret::RunDetail(Node *node, const Vector3& deltaPos)
+{
+    Vector3 scale = node->GetWorldScale();
+    Vector3 position = node->GetWorldPosition();
+    GetScene()->AddChild(node);
+
+    node->SetWorldScale(scale);
+    position += deltaPos;
+    node->SetWorldPosition(position);
+
+    RigidBody *body = node->CreateComponent<RigidBody>();
+    body->SetCollisionLayer(2);
+    body->SetMass(1.0f);
+    CollisionShape *shape = node->CreateComponent<CollisionShape>();
+    shape->SetBox(Vector3::ONE);
+
+    body->SetLinearVelocity({Random(-5.0f, 5.0f), Random(3.0f, 5.0f), Random(-5.0f, 5.0f)});
+    float angular = 5.0f;
+    body->SetAngularVelocity(Vector3(Random(angular), Random(angular), Random(angular)));
+
+    SharedPtr<DeadObject> deadObject(node->CreateComponent<DeadObject>());
+}

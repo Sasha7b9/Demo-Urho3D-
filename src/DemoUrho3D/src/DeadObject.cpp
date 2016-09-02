@@ -20,7 +20,7 @@ void DeadObject::Update(float timeStep)
 {
     RigidBody *body = node_->GetComponent<RigidBody>();
 
-    if(body->GetLinearVelocity() == Vector3::ZERO && body->GetAngularVelocity() == Vector3::ZERO)
+    if(body->GetLinearVelocity().Length() < 0.1f && body->GetAngularVelocity().Length() < 0.1f)
     {
         Vector3 position = node_->GetPosition();
         position.y_ = -1000.0f;

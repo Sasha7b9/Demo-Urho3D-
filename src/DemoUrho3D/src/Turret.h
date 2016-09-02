@@ -66,6 +66,9 @@ private:
     void GradientToTarget(float timeStep);
 
     ///
+    void RunDetail(Node *node, const Vector3& deltaPos);
+
+    ///
     void HandleShot(StringHash eventType, VariantMap& eventData);
 
     float dirOnTarget_ = 0.0f;
