@@ -70,6 +70,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>C:\Urho3D-dbg\build\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>C:\Urho3D-rel\build\include;C:\Urho3D-rel\build\include\Urho3D\ThirdParty;C:\Urho3D-rel\build\include\Urho3D\ThirdParty\Bullet;C:\Urho3D-rel\build\include\Urho3D\ThirdParty\LuaJIT;C:\Urho3D-rel\Source\Samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -288,6 +291,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="src\CustomLogic.cpp" />
     <ClCompile Include="src\DeadObject.cpp" />
     <ClCompile Include="src\GlobalVars.cpp" />
+    <ClCompile Include="src\Grass.cpp" />
     <ClCompile Include="src\GUI.cpp" />
     <ClCompile Include="src\lImage.cpp" />
     <ClCompile Include="src\lSprite.cpp" />
@@ -302,6 +306,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="src\CustomLogic.h" />
     <ClInclude Include="src\DeadObject.h" />
     <ClInclude Include="src\GlobalVars.h" />
+    <ClInclude Include="src\Grass.h" />
     <ClInclude Include="src\GUI.h" />
     <ClInclude Include="src\lImage.h" />
     <ClInclude Include="src\lSprite.h" />

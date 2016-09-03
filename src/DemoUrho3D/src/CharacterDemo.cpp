@@ -148,9 +148,9 @@ void CharacterDemo::CreateScene()
     Node* zoneNode = scene_->CreateChild("Zone");
     Zone* zone = zoneNode->CreateComponent<Zone>();
     zone->SetAmbientColor(Color(0.35f, 0.35f, 0.35f));
-    zone->SetFogColor(Color(0.50f, 0.50f, 0.70f));
-    zone->SetFogStart(300.0f);
-    zone->SetFogEnd(500.0f);
+    //zone->SetFogColor(Color(0.50f, 0.50f, 0.70f));
+    //zone->SetFogStart(10.0f);
+    //zone->SetFogEnd(50.0f);
     zone->SetBoundingBox(BoundingBox(-2000.0f, 2000.0f));
 
     // Create a directional light with cascaded shadow mapping
@@ -195,7 +195,7 @@ void CharacterDemo::CreateScene()
     terrainNode->SetPosition(Vector3::ZERO);
     Terrain* terrain = terrainNode->CreateComponent<Terrain>();
     terrain->SetPatchSize(64);
-    terrain->SetSpacing(Vector3(2.0f, 0.05f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
+    terrain->SetSpacing(Vector3(2.0f, 0.25f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
     terrain->SetSmoothing(true);
     terrain->SetHeightMap(cache->GetResource<Image>("Textures/HeightMap.png"));
     terrain->SetMaterial(cache->GetResource<Material>("Materials/TerraTiled.xml"));
@@ -214,7 +214,7 @@ void CharacterDemo::CreateScene()
         position.y_ = terrain->GetHeight(position) - 0.1f;
         objectNode->SetPosition(position);
         objectNode->SetRotation(Quaternion(0.0f, Random(360.0f), 0.0f));
-        objectNode->SetScale(2.0f + Random(5.0f));
+        objectNode->SetScale(2.0f + Random(3.0f));
         StaticModel* object = objectNode->CreateComponent<StaticModel>();
         object->SetModel(cache->GetResource<Model>("Models/Mushroom.mdl"));
         object->SetMaterial(cache->GetResource<Material>("Materials/Mushroom.xml"));
@@ -227,7 +227,7 @@ void CharacterDemo::CreateScene()
         shape->SetTriangleMesh(object->GetModel(), 0);
     }
 
-    /*
+    
     const unsigned NUM_GUNS = 15;
     for(unsigned i = 0; i < NUM_GUNS; ++i)
     {
@@ -235,39 +235,48 @@ void CharacterDemo::CreateScene()
         position.y_ = terrain->GetHeight(position);
         CreateTurret(position);
     }
-    */
+    
 
     //for(int i = 0; i < 1; i++)
     //{
     
+    /*
         Node *nodeGroup = scene_->CreateChild("group");
         StaticModelGroup *modelGroup = nodeGroup->CreateComponent<StaticModelGroup>();
         modelGroup->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
         modelGroup->SetMaterial(cache->GetResource<Material>("Materials/Grass.xml"));
+        */
         
 
-        const unsigned NUM_BOXES = 1000;
-        for(unsigned i = 0; i < NUM_BOXES; ++i)
-        {
-            //Vector3 scale(1.0f, 1.0f, 1.0f);
-            float scale = 2.5f;
+    float step = 0.5f;
 
-            Node* objectNode = scene_->CreateChild("Box");
-            float size = 25.0f;
-            Vector3 position(Random(-size, size), 0.0f, Random(-size, size));
-            position.y_ = terrain->GetHeight(position) + 0.5f * scale - 0.05f;
-            objectNode->SetPosition(position);
-            objectNode->SetRotation(Quaternion(Random(-180.0f, 180.0f), Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
-            objectNode->SetScale(scale);
-            modelGroup->AddInstanceNode(objectNode);
-            /*
-            StaticModel* object = objectNode->CreateComponent<StaticModel>();
-            object->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
-            object->SetMaterial(cache->GetResource<Material>("Materials/Grass.xml"));
-            object->SetCastShadows(false);
-*/            
+    float timeStart = gTime->GetElapsedTime();
+
+    float size = 1000;
+
+        for(int i = 0; i < size; i++)
+        {
+            for(int j = 0; j < size; j++)
+            {
+                float scale = 3.0f;
+
+                Node* objectNode = scene_->CreateChild("Box");
+                float size = 200.0f;
+                Vector3 position(-size * step * 2 + i * step, 0.0f, -size * step * 2 + j * step);
+                position.y_ = terrain->GetHeight(position) - 0.25f * scale;
+                objectNode->SetPosition(position);
+                objectNode->SetRotation(Quaternion(Random(-180.0f, 180.0f), Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
+                objectNode->SetScale(scale);
+                //modelGroup->AddInstanceNode(objectNode);
+
+                StaticModel* object = objectNode->CreateComponent<StaticModel>();
+                object->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+                object->SetMaterial(cache->GetResource<Material>("Materials/Grass.xml"));
+                object->SetCastShadows(false);
+
+            }
         }
-    //}
+        URHO3D_LOGINFOF("time %f", gTime->GetElapsedTime() - timeStart);
 }
 
 void CharacterDemo::CreateCharacter()

@@ -4,6 +4,7 @@
     <texture unit="1" name="Textures/TerrainDetail1.dds" />
     <texture unit="2" name="Textures/TerrainDetail2.dds" />
     <texture unit="3" name="Textures/TerrainDetail3.dds" />
-    <parameter name="MatSpecColor" value="0.5 0.5 0.5 16" />
+    <parameter name="MatSpecColor" value="0.1 1.0 0.1 16" />
+    <parameter name="MatDiffColor" value="0.0 1.0 0.0 1" />
     <parameter name="DetailTiling" value="512 512" />
 </material>

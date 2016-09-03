@@ -168,7 +168,7 @@ void Turret::Update(float timeStep)
             timeFromPrevBegin = gTime->GetElapsedTime();
         }
 
-        float timeEnter = gTime->GetElapsedTime();
+        //float timeEnter = gTime->GetElapsedTime();
 
         float speed = 10.0f;
 
@@ -205,7 +205,7 @@ void Turret::Update(float timeStep)
 
         UpdateLights();
 
-        timeUpdate += (gTime->GetElapsedTime() - timeEnter);
+        //timeUpdate += (gTime->GetElapsedTime() - timeEnter);
     }
 }
 
