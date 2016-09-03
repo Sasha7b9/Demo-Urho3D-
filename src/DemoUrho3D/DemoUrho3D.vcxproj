@@ -79,7 +79,7 @@
       <AssemblerListingLocation>Release/</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <FloatingPointModel>Fast</FloatingPointModel>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -90,6 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_SECURE_SCL=0;URHO3D_MINIDUMPS;URHO3D_FILEWATCHER;URHO3D_PROFILING;URHO3D_LOGGING;URHO3D_THREADING;URHO3D_ANGELSCRIPT;URHO3D_LUA;TOLUA_RELEASE;URHO3D_NAVIGATION;URHO3D_NETWORK;URHO3D_PHYSICS;URHO3D_URHO2D;URHO3D_CXX11;_CRT_SECURE_NO_WARNINGS;HAVE_STDINT_H;CMAKE_INTDIR="Release";DX11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
+      <AdditionalOptions>-MP %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_SECURE_SCL=0;URHO3D_MINIDUMPS;URHO3D_FILEWATCHER;URHO3D_PROFILING;URHO3D_LOGGING;URHO3D_THREADING;URHO3D_ANGELSCRIPT;URHO3D_LUA;TOLUA_RELEASE;URHO3D_NAVIGATION;URHO3D_NETWORK;URHO3D_PHYSICS;URHO3D_URHO2D;URHO3D_CXX11;_CRT_SECURE_NO_WARNINGS;HAVE_STDINT_H;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>

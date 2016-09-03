@@ -57,6 +57,7 @@
 #include "GUI.h"
 #include "DeadObject.h"
 #include "CustomLogic.h"
+#include "Grass.h"
 
 #include <Urho3D/DebugNew.h>
 
@@ -76,6 +77,7 @@ CharacterDemo::CharacterDemo(Context* context) :
     Bullet::RegisterObject(context);
     DeadObject::RegisterObject(context);
     CustomLogic::RegisterObject(context);
+    Grass::RegisterObject(context);
 }
 
 CharacterDemo::~CharacterDemo()
@@ -130,6 +132,8 @@ void CharacterDemo::CreateScene()
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
     scene_ = new Scene(context_);
+
+    gScene = scene_;
 
     // Create scene subsystem components
     scene_->CreateComponent<Octree>();
@@ -193,12 +197,12 @@ void CharacterDemo::CreateScene()
 
     Node* terrainNode = scene_->CreateChild("Terrain");
     terrainNode->SetPosition(Vector3::ZERO);
-    Terrain* terrain = terrainNode->CreateComponent<Terrain>();
-    terrain->SetPatchSize(64);
-    terrain->SetSpacing(Vector3(2.0f, 0.25f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
-    terrain->SetSmoothing(true);
-    terrain->SetHeightMap(cache->GetResource<Image>("Textures/HeightMap.png"));
-    terrain->SetMaterial(cache->GetResource<Material>("Materials/TerraTiled.xml"));
+    gTerrain = terrainNode->CreateComponent<Terrain>();
+    gTerrain->SetPatchSize(64);
+    gTerrain->SetSpacing(Vector3(2.0f, 0.25f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
+    gTerrain->SetSmoothing(true);
+    gTerrain->SetHeightMap(cache->GetResource<Image>("Textures/HeightMap.png"));
+    gTerrain->SetMaterial(cache->GetResource<Material>("Materials/TerraTiled.xml"));
 
     RigidBody *body = terrainNode->CreateComponent<RigidBody>();
     body->SetCollisionLayer(2);
@@ -211,7 +215,7 @@ void CharacterDemo::CreateScene()
     {
         Node* objectNode = scene_->CreateChild("Mushroom");
         Vector3 position = Vector3(Random(180.0f) - 90.0f, 0.0f, Random(180.0f) - 90.0f);
-        position.y_ = terrain->GetHeight(position) - 0.1f;
+        position.y_ = gTerrain->GetHeight(position) - 0.1f;
         objectNode->SetPosition(position);
         objectNode->SetRotation(Quaternion(0.0f, Random(360.0f), 0.0f));
         objectNode->SetScale(2.0f + Random(3.0f));
@@ -232,10 +236,13 @@ void CharacterDemo::CreateScene()
     for(unsigned i = 0; i < NUM_GUNS; ++i)
     {
         Vector3 position(Random(25.0f), 0.0f, Random(25.0f));
-        position.y_ = terrain->GetHeight(position);
+        position.y_ = gTerrain->GetHeight(position);
         CreateTurret(position);
     }
-    
+
+    Node* nodeGrass = gTerrain->GetNode()->CreateChild("Grass");
+    nodeGrass->CreateComponent<Grass>();
+
 
     //for(int i = 0; i < 1; i++)
     //{
@@ -246,37 +253,6 @@ void CharacterDemo::CreateScene()
         modelGroup->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
         modelGroup->SetMaterial(cache->GetResource<Material>("Materials/Grass.xml"));
         */
-        
-
-    float step = 0.5f;
-
-    float timeStart = gTime->GetElapsedTime();
-
-    float size = 1000;
-
-        for(int i = 0; i < size; i++)
-        {
-            for(int j = 0; j < size; j++)
-            {
-                float scale = 3.0f;
-
-                Node* objectNode = scene_->CreateChild("Box");
-                float size = 200.0f;
-                Vector3 position(-size * step * 2 + i * step, 0.0f, -size * step * 2 + j * step);
-                position.y_ = terrain->GetHeight(position) - 0.25f * scale;
-                objectNode->SetPosition(position);
-                objectNode->SetRotation(Quaternion(Random(-180.0f, 180.0f), Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
-                objectNode->SetScale(scale);
-                //modelGroup->AddInstanceNode(objectNode);
-
-                StaticModel* object = objectNode->CreateComponent<StaticModel>();
-                object->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
-                object->SetMaterial(cache->GetResource<Material>("Materials/Grass.xml"));
-                object->SetCastShadows(false);
-
-            }
-        }
-        URHO3D_LOGINFOF("time %f", gTime->GetElapsedTime() - timeStart);
 }
 
 void CharacterDemo::CreateCharacter()

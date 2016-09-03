@@ -1,6 +1,6 @@
 <material>
-    <technique name="Techniques/DiffAlphaMask.xml" quality="1" />
-    <texture unit="diffuse" name="Textures/Grass4.png" />
+    <technique name="Techniques/DiffAlphaMaskGrass.xml" quality="1" />
+    <texture unit="diffuse" name="Textures/Grass.dds" />
     <parameter name="MatDiffColor" value="0.0 0.7 0.0   1.0" />
     <cull value="none" /> 
     <shadowcull value="none" /> 

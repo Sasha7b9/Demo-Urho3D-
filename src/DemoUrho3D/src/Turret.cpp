@@ -163,7 +163,7 @@ void Turret::Update(float timeStep)
     {
         if((gTime->GetElapsedTime() - timeFromPrevBegin) >= 1.0f)
         {
-            URHO3D_LOGINFOF("Time update = %f", timeUpdate);
+            //URHO3D_LOGINFOF("Time update = %f", timeUpdate);
             timeUpdate = 0.0f;
             timeFromPrevBegin = gTime->GetElapsedTime();
         }
