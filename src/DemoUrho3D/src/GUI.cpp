@@ -8,7 +8,7 @@ GUI::GUI(Context *context) :
 {
     sprite = new lSprite(context);
     sprite->SetSize(200, 20);
-    sprite->SetPosition(GetSubsystem<UI>()->GetRoot()->GetWidth() / 2 - sprite->GetWidth() / 2, 10);
+    sprite->SetPosition(GetSubsystem<UI>()->GetRoot()->GetWidth() / 2.0f - sprite->GetWidth() / 2, 10.0f);
     //AddChild(sprite);
 }
 
@@ -21,6 +21,6 @@ void GUI::Init(UIElement* root)
 void GUI::DrawHealth(float health)
 {
     sprite->Clear(Color::GRAY);
-    int width = sprite->GetWidth() * health / 100.0f;
+    int width = (int)(sprite->GetWidth() * health / 100.0f);
     sprite->FillRectangle(0, 0, width, sprite->GetHeight(), Color::RED);
 }
