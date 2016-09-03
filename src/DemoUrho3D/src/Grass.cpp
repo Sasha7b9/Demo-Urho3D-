@@ -161,7 +161,7 @@ void ZoneGrass::Update()
 {
     float distance = (zones[0]->GetPosition() - gNodeJack->GetPosition()).Length();
 
-    int num = (int)distance / 25;
+    int num = (int)distance / 50;
 
     Distance newDist = Distance_0;
 
