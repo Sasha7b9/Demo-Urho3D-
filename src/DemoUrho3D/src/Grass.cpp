@@ -16,9 +16,9 @@ Grass::Grass(Context *context) :
 
     float fullSize = 200.0f;
     float step = 0.5f;
-    int numZones = 10;
+    int numZones = 20;
 
-    float startX = -fullSize / 2.0f + (fullSize / numZones) / 2.0f;
+    float startX = 0.0f;
     float startZ = startX;
 
     Node *node = gScene->CreateChild("Grass");
@@ -42,18 +42,16 @@ void Grass::RegisterObject(Context *context)
 
 void Grass::Update(float timeStep)
 {
-    return;
-
     for(ZoneGrass* zone : zones)
     {
         zone->Update();
     }
 }
 
-ZoneGrass::ZoneGrass(Node *node, const Vector3& position, float size, float step)
+ZoneGrass::ZoneGrass(Node *node_, const Vector3& position, float size, float step)
 {
-    float minX = -size / 2.0f + step / 2.0f + position.x_;
-    float minZ = -size / 2.0f + step / 2.0f + position.z_;
+    float minX = -size / 2.0f + step / 2.0f;
+    float minZ = -size / 2.0f + step / 2.0f;
 
     int numGrass = (int)(size / step);
 
@@ -76,7 +74,7 @@ ZoneGrass::ZoneGrass(Node *node, const Vector3& position, float size, float step
         blocks[0][index2] = temp;
     }
 
-    float k = 1.1f;
+    float k = 1.25f;
 
     Vector<int> positions;
     positions.Resize(allGrass);
@@ -116,11 +114,11 @@ ZoneGrass::ZoneGrass(Node *node, const Vector3& position, float size, float step
         {
             float scale = Random(0.75f, 1.25f);
 
-            //Node *nodeZone = zones[positions[numBlock++]];
+            Node *nodeZone = zones[positions[numBlock++]];
 
-            Node* objectNode = node->CreateChild("Grass");
+            Node* objectNode = nodeZone->CreateChild("Grass");
             Vector3 position(minX + step * i + Random(-step / 2, step / 2), 0.0f, minZ + step * j + Random(-step / 2, step / 2));
-            position.y_ = gTerrain->GetHeight(position + node->GetPosition()) + 0.5f * scale;
+            position.y_ = gTerrain->GetHeight(position + nodeZone->GetPosition()) + 0.5f * scale;
             objectNode->SetPosition(position);
             objectNode->SetRotation(Quaternion(Random(-180.0f, 180.0f), Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
             objectNode->SetScale(scale);
@@ -187,6 +185,6 @@ void ZoneGrass::SwitchState()
 {
     for(int i = 0; i < Distance_Size; i++)
     {
-        zones[i]->SetDeepEnabled(!(i < dist));
+        zones[i]->SetDeepEnabled(i < dist ? false : true);
     }
 }

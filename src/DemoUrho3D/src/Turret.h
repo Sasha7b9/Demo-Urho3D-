@@ -85,8 +85,8 @@ private:
 
     Sound *sound_ = nullptr;
 
-    SharedPtr<lSprite> sprite_ = nullptr;
-    SharedPtr<Material> materialGUI_ = nullptr;
+    SharedPtr<lSprite> sprite_;
+    SharedPtr<Material> materialGUI_;
     Node *modelUInode_ = nullptr;
     Node *nodeLightL_ = nullptr;
     Node *nodeLightR_ = nullptr;

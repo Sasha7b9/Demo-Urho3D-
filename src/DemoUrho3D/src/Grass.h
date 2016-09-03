@@ -16,7 +16,6 @@ private:
     {
         Distance_0,
         Distance_1,
-        /*
         Distance_2,
         Distance_3,
         Distance_4,
@@ -24,7 +23,6 @@ private:
         Distance_6,
         Distance_7,
         Distance_8,
-        */
         Distance_Size
     };
 

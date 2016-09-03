@@ -5,9 +5,9 @@
 #include "Lighting.hlsl"
 #include "Fog.hlsl"
 
-#undef NORMALMAP
-#undef SHADOW
-#undef PERPIXEL
+//#undef NORMALMAP
+//#undef SHADOW
+//#undef PERPIXEL
 
 void VS(float4 iPos : POSITION,
     #if !defined(BILLBOARD) && !defined(TRAILFACECAM)

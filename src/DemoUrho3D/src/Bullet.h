@@ -35,6 +35,6 @@ private:
     float timeShot = 0.0f;
     static float timeStartCalc;
     static float timeForBuild;
-    SharedPtr<Material> material = nullptr;
+    SharedPtr<Material> material;
     float timeLive = 0.0f;
 };
