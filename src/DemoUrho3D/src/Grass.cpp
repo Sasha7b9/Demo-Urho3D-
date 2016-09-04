@@ -1,5 +1,6 @@
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Graphics/StaticModel.h>
+#include <Urho3D/Graphics/StaticModelGroup.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Graphics/Model.h>
 #include <Urho3D/Graphics/Material.h>
@@ -14,11 +15,13 @@ Grass::Grass(Context *context) :
 {
     float timeStart = gTime->GetElapsedTime();
 
-    float fullSize = 200.0f;
+    float fullSize = 400.0f;
     float step = 0.5f;
-    int numZones = 20;
 
-    float startX = 0.0f;
+    int sizeBlock = 10.0f;
+    int numZones = fullSize / sizeBlock;
+
+    float startX = -fullSize / 2.0f + step / 2.0f;
     float startZ = startX;
 
     Node *node = gScene->CreateChild("Grass");
@@ -74,7 +77,7 @@ ZoneGrass::ZoneGrass(Node *node_, const Vector3& position, float size, float ste
         blocks[0][index2] = temp;
     }
 
-    float k = 1.25f;
+    float k = 2.0f;
 
     Vector<int> positions;
     positions.Resize(allGrass);
@@ -102,7 +105,13 @@ ZoneGrass::ZoneGrass(Node *node_, const Vector3& position, float size, float ste
 
     for(int i = 0; i < Distance_Size; i++)
     {
-        zones.Push(gScene->CreateChild("GrassZone"));
+        Node* nodeGroup = gScene->CreateChild("GrassZone");
+        StaticModelGroup* group = nodeGroup->CreateComponent<StaticModelGroup>();
+        group->SetModel(gCache->GetResource<Model>("Models/Plane.mdl"));
+        group->SetMaterial(gCache->GetResource<Material>("Materials/Grass.xml"));
+        group->SetCastShadows(false);
+
+        zones.Push(nodeGroup);
         zones[i]->SetPosition(position);
     }
 
@@ -122,12 +131,7 @@ ZoneGrass::ZoneGrass(Node *node_, const Vector3& position, float size, float ste
             objectNode->SetPosition(position);
             objectNode->SetRotation(Quaternion(Random(-180.0f, 180.0f), Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
             objectNode->SetScale(scale);
-            //modelGroup->AddInstanceNode(objectNode);
-
-            StaticModel* object = objectNode->CreateComponent<StaticModel>();
-            object->SetModel(gCache->GetResource<Model>("Models/Plane.mdl"));
-            object->SetMaterial(gCache->GetResource<Material>("Materials/Grass.xml"));
-            object->SetCastShadows(false);
+            nodeZone->GetComponent<StaticModelGroup>()->AddInstanceNode(objectNode);
         }
     }
 }

@@ -199,7 +199,7 @@ void CharacterDemo::CreateScene()
     terrainNode->SetPosition(Vector3::ZERO);
     gTerrain = terrainNode->CreateComponent<Terrain>();
     gTerrain->SetPatchSize(64);
-    gTerrain->SetSpacing(Vector3(2.0f, 0.25f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
+    gTerrain->SetSpacing(Vector3(2.0f, 0.0f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
     gTerrain->SetSmoothing(true);
     gTerrain->SetHeightMap(cache->GetResource<Image>("Textures/HeightMap.png"));
     gTerrain->SetMaterial(cache->GetResource<Material>("Materials/TerraTiled.xml"));
@@ -239,6 +239,7 @@ void CharacterDemo::CreateScene()
         position.y_ = gTerrain->GetHeight(position);
         CreateTurret(position);
     }
+    
 
     Node* nodeGrass = gTerrain->GetNode()->CreateChild("Grass");
     nodeGrass->CreateComponent<Grass>();
