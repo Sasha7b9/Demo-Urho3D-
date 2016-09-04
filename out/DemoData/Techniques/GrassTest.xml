@@ -1,0 +1,4 @@
+<technique vs="LitSolid" ps="LitSolid" vsdefines="TRANSLUCENT" psdefines="DIFFMAP ALPHAMASK TRANSLUCENT" alphamask="true" >
+    <pass name="base" />
+    <pass name="litbase" psdefines="AMBIENT" depthwrite="true"/>
+</technique>

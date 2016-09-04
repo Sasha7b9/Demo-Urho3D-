@@ -16,10 +16,10 @@ Grass::Grass(Context *context) :
     float timeStart = gTime->GetElapsedTime();
 
     float fullSize = 400.0f;
-    float step = 0.5f;
+    float step = 1.5f;
 
-    int sizeBlock = 10.0f;
-    int numZones = fullSize / sizeBlock;
+    int sizeBlock = 10;
+    int numZones = (int)fullSize / sizeBlock;
 
     float startX = -fullSize / 2.0f + step / 2.0f;
     float startZ = startX;
@@ -58,7 +58,7 @@ ZoneGrass::ZoneGrass(Node *node_, const Vector3& position, float size, float ste
 
     int numGrass = (int)(size / step);
 
-    int allGrass = numGrass * numGrass;
+    int allGrass = (int)(numGrass * numGrass * (CalculateAverageNormal(position, size) + 1.0f) * 2.0f);
 
     Vector<Vector<int>> blocks;
     blocks.Resize(Distance_Size);
@@ -77,7 +77,7 @@ ZoneGrass::ZoneGrass(Node *node_, const Vector3& position, float size, float ste
         blocks[0][index2] = temp;
     }
 
-    float k = 2.0f;
+    float k = 1.25f;
 
     Vector<int> positions;
     positions.Resize(allGrass);
@@ -117,22 +117,19 @@ ZoneGrass::ZoneGrass(Node *node_, const Vector3& position, float size, float ste
 
     int numBlock = 0;
 
-    for(int i = 0; i < numGrass; i++)
+    for(int i = 0; i < allGrass; i++)
     {
-        for(int j = 0; j < numGrass; j++)
-        {
-            float scale = Random(0.75f, 1.25f);
+        float scale = Random(0.75f, 1.25f);
 
-            Node *nodeZone = zones[positions[numBlock++]];
+        Node *nodeZone = zones[positions[numBlock++]];
 
-            Node* objectNode = nodeZone->CreateChild("Grass");
-            Vector3 position(minX + step * i + Random(-step / 2, step / 2), 0.0f, minZ + step * j + Random(-step / 2, step / 2));
-            position.y_ = gTerrain->GetHeight(position + nodeZone->GetPosition()) + 0.5f * scale;
-            objectNode->SetPosition(position);
-            objectNode->SetRotation(Quaternion(Random(-180.0f, 180.0f), Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
-            objectNode->SetScale(scale);
-            nodeZone->GetComponent<StaticModelGroup>()->AddInstanceNode(objectNode);
-        }
+        Node* objectNode = nodeZone->CreateChild("Grass");
+        Vector3 position(Random(minX, minX + size), 0.0f, Random(minZ, minZ + size));
+        position.y_ = gTerrain->GetHeight(position + nodeZone->GetPosition()) + 0.5f * scale;
+        objectNode->SetPosition(position);
+        objectNode->SetRotation(Quaternion(Random(-180.0f, 180.0f), Vector3::UP) * Quaternion(90.0f, Vector3::LEFT));
+        objectNode->SetScale(scale);
+        nodeZone->GetComponent<StaticModelGroup>()->AddInstanceNode(objectNode);
     }
 }
 
@@ -191,4 +188,32 @@ void ZoneGrass::SwitchState()
     {
         zones[i]->SetDeepEnabled(i < dist ? false : true);
     }
+}
+
+float ZoneGrass::CalculateAverageNormal(const Vector3& position, float size)
+{
+    float step = 1.0f;
+
+    Vector3 sumNormals = Vector3::ZERO;
+
+    float minX = position.x_ - size / 2.0f;
+    float minZ = position.z_ - size / 2.0f;
+
+    float maxX = minX + size;
+    float maxZ = minZ + size;
+
+    for(float x = minX; x < maxX; x += step)
+    {
+        for(float z = minZ; z < maxZ; z += step)
+        {
+            sumNormals += gTerrain->GetNormal({x, 0.0f, z});
+        }
+    }
+
+    Vector3 aveNormal = sumNormals;
+    aveNormal.Normalize();
+
+    aveNormal.y_ = 0.0f;
+
+    return aveNormal.Length();
 }

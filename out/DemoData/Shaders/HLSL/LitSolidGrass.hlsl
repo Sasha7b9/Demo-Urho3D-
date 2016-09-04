@@ -5,9 +5,6 @@
 #include "Lighting.hlsl"
 #include "Fog.hlsl"
 
-//#undef NORMALMAP
-//#undef SHADOW
-//#undef PERPIXEL
 
 void VS(float4 iPos : POSITION,
     #if !defined(BILLBOARD) && !defined(TRAILFACECAM)
@@ -77,12 +74,14 @@ void VS(float4 iPos : POSITION,
     #endif
 
     float4x3 modelMatrix = iModelMatrix;
+    
+    /// Begin animation grass
 
     float delta = (sign(iPos.y) + 1.0) / 5.0;
-
     float3 worldPos = GetWorldPos(modelMatrix);
-
     iPos.y += sin(cElapsedTime + worldPos.z + worldPos.y) * iPos.x * delta;
+
+    /// End animation grass
 
     worldPos = GetWorldPos(modelMatrix);
 

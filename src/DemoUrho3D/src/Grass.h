@@ -27,6 +27,8 @@ private:
     };
 
     Node* CreateHalfZone(Node *node);
+    float CalculateAverageNormal(const Vector3& position, float size);
+
     PODVector<Node*> zones;
     Distance dist = Distance_0;
 };

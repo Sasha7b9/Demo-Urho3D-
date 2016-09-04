@@ -199,7 +199,7 @@ void CharacterDemo::CreateScene()
     terrainNode->SetPosition(Vector3::ZERO);
     gTerrain = terrainNode->CreateComponent<Terrain>();
     gTerrain->SetPatchSize(64);
-    gTerrain->SetSpacing(Vector3(2.0f, 0.0f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
+    gTerrain->SetSpacing(Vector3(2.0f, 0.25f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
     gTerrain->SetSmoothing(true);
     gTerrain->SetHeightMap(cache->GetResource<Image>("Textures/HeightMap.png"));
     gTerrain->SetMaterial(cache->GetResource<Material>("Materials/TerraTiled.xml"));
@@ -209,6 +209,7 @@ void CharacterDemo::CreateScene()
     CollisionShape* shape = terrainNode->CreateComponent<CollisionShape>();
     shape->SetTerrain();
 
+    /*
     // Create mushrooms of varying sizes
     const unsigned NUM_MUSHROOMS = 10;
     for (unsigned i = 0; i < NUM_MUSHROOMS; ++i)
@@ -230,8 +231,9 @@ void CharacterDemo::CreateScene()
         CollisionShape* shape = objectNode->CreateComponent<CollisionShape>();
         shape->SetTriangleMesh(object->GetModel(), 0);
     }
+    */
 
-    
+    /*
     const unsigned NUM_GUNS = 15;
     for(unsigned i = 0; i < NUM_GUNS; ++i)
     {
@@ -239,7 +241,7 @@ void CharacterDemo::CreateScene()
         position.y_ = gTerrain->GetHeight(position);
         CreateTurret(position);
     }
-    
+    */
 
     Node* nodeGrass = gTerrain->GetNode()->CreateChild("Grass");
     nodeGrass->CreateComponent<Grass>();
