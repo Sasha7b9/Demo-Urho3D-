@@ -83,6 +83,26 @@ void VS(float4 iPos : POSITION,
 
     /// End animation grass
 
+    /// Begin rotation grass
+
+//    float3 front = normalize(cCameraPos - worldPos);
+//    float3 dir1 = normalize(cross(front, front + float3(0, 1, 0)));
+//    float3 dir2 = normalize(cross(front, dir1));
+
+//    float4x3 matRot =
+//    {
+//        dir1,
+//        dir2,
+//        front,
+//        1, 1, 1
+//    };
+
+//    iPos = float4(mul(iPos, matRot), 1);
+
+//    modelMatrix = modelMatrix * matRot;
+
+    /// End rotation grass
+
     worldPos = GetWorldPos(modelMatrix);
 
     oPos = GetClipPos(worldPos);

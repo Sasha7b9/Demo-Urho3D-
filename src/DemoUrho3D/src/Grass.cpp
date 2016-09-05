@@ -15,7 +15,7 @@ Grass::Grass(Context *context) :
 {
     float timeStart = gTime->GetElapsedTime();
 
-    float fullSize = 400.0f;
+    float fullSize = 100.0f;
     float step = 1.5f;
 
     int sizeBlock = 10;
